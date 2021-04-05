@@ -14,6 +14,6 @@ class Process:
         return self.BT
 
     def calculate_finished_process(self, cur_time) -> int:
-		self.TT = cur_time - self.AT
-		self.WT = self.TT - self.BT
-		self.NTT = self.TT / self.BT
+        self.TT = cur_time - self.AT
+        self.WT = self.TT - self.BT
+        self.NTT = self.TT / self.BT

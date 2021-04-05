@@ -1,7 +1,9 @@
+from RR import *
+
 def test(process_input_list, cpu_count):
     scheduler_list = []
     # fcfs = FCFS(process_input_list, cpu_count)
-    # scheduler_list.append(RR(process_input_list, cpu_count))
+    scheduler_list.append(RR(process_input_list, cpu_count, 2))
     # scheduler_list.append(HRRN(process_input_list, cpu_count))
     # ...
     for scheduler in scheduler_list:
