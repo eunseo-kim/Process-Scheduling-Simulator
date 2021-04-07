@@ -26,17 +26,22 @@ class MyApp(QWidget):
 
         # 프로세스 이름을 사용자에게 받을 ProName, AT를 사용자에게 받을 AT, BT를 사용자에게 받을 BT
         # AT와 BT같이 사용자에게 숫자로만 받을거라면 스핀박스로 하는게 더 편하다고 함 
-        ProName = QLineEdit()
-        AT = QSpinBox()
-        AT.setRange(0, 65535)
-        BT = QSpinBox()
-        BT.setRange(0, 65535)
+        self.ProName = QLineEdit()
+        self.ProName.setMaxLength(10)
+        self.AT = QSpinBox()
+        self.AT.setRange(0, 65535)
+        self.BT = QSpinBox()
+        self.BT.setRange(0, 65535)
 
         #프로세스 목록을 표로 보여줄 Proc_Table선언
         self.Proc_Table = QTableWidget(self)
         self.Proc_Table.setColumnCount(3)
         self.Proc_Table.setHorizontalHeaderLabels(['Process Name', 'Arrival Time', 'Burst Time'])
-
+        self.Proc_Table.verticalHeader().setVisible(False)
+        header = self.Proc_Table.horizontalHeader()       
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
         #CPU의 코어 개수 선택에 사용할 CPU_Number를 콤보박스로 선언
         self.CPU_Number = QComboBox(self)
         self.CPU_Number.addItem('1')
@@ -52,10 +57,19 @@ class MyApp(QWidget):
         self.Gantt_Table = QTableWidget(self)
         self.Gantt_Table.setColumnCount(6)
         self.Gantt_Table.setHorizontalHeaderLabels(['Process Name', 'Arrival Time', 'Burst Time', 'Waiting Time', 'Turnaround Time', 'Normalized TT'])
+        self.Gantt_Table.verticalHeader().setVisible(False)
+        header = self.Gantt_Table.horizontalHeader()       
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Stretch)
+        header.setSectionResizeMode(4, QHeaderView.Stretch)
+        header.setSectionResizeMode(5, QHeaderView.Stretch)
+
 
         # Proc_List에 프로세스 목록을 추가 및 화면 내용을 리셋하는 버튼 (이때문에 거진 뒤로 가야할듯) 
         addButton = QPushButton('Add', self)
-        addButton.clicked.connect(lambda: self.add(ProName.text(),AT.value(),BT.value()))
+        addButton.clicked.connect(self.add)
         resetButton = QPushButton('Reset', self)
         resetButton.clicked.connect(self.reset)
 
@@ -74,9 +88,9 @@ class MyApp(QWidget):
         grid_Line1.addWidget(QLabel('AT'), 0, 2)
         grid_Line1.addWidget(QLabel('BT'), 0, 3)
         grid_Line1.addWidget(self.Alg_Select,1,0)
-        grid_Line1.addWidget(ProName, 1, 1)
-        grid_Line1.addWidget(AT, 1, 2)
-        grid_Line1.addWidget(BT, 1, 3)
+        grid_Line1.addWidget(self.ProName, 1, 1)
+        grid_Line1.addWidget(self.AT, 1, 2)
+        grid_Line1.addWidget(self.BT, 1, 3)
         grid_Line1.addWidget(addButton, 1, 4)
         grid_Line1.addWidget(resetButton, 1, 5)
 
@@ -93,7 +107,7 @@ class MyApp(QWidget):
         hbox_Line2 = QHBoxLayout()
         hbox_Line2.addWidget(self.Proc_Table)
         hbox_Line2.addLayout(grid_Line2)
-        
+
         #레이아웃 및 위젯을 통합할 vbox_main을 선언, 메인 레이아웃 지정 후 레이아웃 및 위젯 통합
         vbox_main = QVBoxLayout()
         self.setLayout(vbox_main)
@@ -119,20 +133,23 @@ class MyApp(QWidget):
             self.TQ.setEnabled(True)
         else:
             self.TQ.setDisabled(True)
-    def add(self, name, at, bt):
+    def add(self):
         # Proc_List에 프로세스 이름, AT, BT 저장
-        self.Proc_List.append((name,at,bt))
+        self.Proc_List.append((self.ProName.text(),self.AT.value(),self.BT.value()))
         # 이후 Proc_Table에 프로세스를 띄우도록 함, 열크기 = Proc_List 크기
         self.Proc_Table.setRowCount(len(self.Proc_List))
         for i in range(len(self.Proc_List)):
             self.Proc_Table.setItem(i, 0, QTableWidgetItem(self.Proc_List[i][0]))
             self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i][1])))
             self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i][2])))
+        self.ProName.clear()
+        self.AT.setValue(0)
+        self.BT.setValue(0)
 
     def reset(self):
         # Proc_Table과 Gantt_Table 열을 0으로 만들고 Proc_List를 clear
         self.Proc_Table.setRowCount(0)
-        self.Gantt_Table.setRowConut(0)
+        self.Gantt_Table.setRowCount(0)
         self.Stop_Alg.setDisabled(True)
         self.Proc_List.clear()
         
