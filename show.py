@@ -3,6 +3,7 @@ import random
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
+import time
 
 class MyApp(QWidget):
 
@@ -56,6 +57,8 @@ class MyApp(QWidget):
         self.Ready_Table.setRowCount(1)
         self.Ready_Table.verticalHeader().setVisible(False)
         self.Ready_Table.setMaximumHeight(50)
+        self.Ready_Table.verticalHeader().setDefaultSectionSize(40)
+        self.Ready_Table.horizontalHeader().setVisible(False)
 
         # CPU 일 목록
         self.Gantt_Table = QTableWidget(self)
@@ -197,14 +200,76 @@ class MyApp(QWidget):
     def reset(self):
         # Proc_Table과 Rseult_Table 열을 0으로 만들고 Proc_List를 clear
         self.Proc_Table.setRowCount(0)
-        self.Gantt_Table.setColumnCount(0)
+        self.Ready_Table.reset()
+        self.Gantt_Table.reset()
         self.Rseult_Table.setRowCount(0)
         self.Stop_Alg.setDisabled(True)
         self.Proc_List.clear()
         
+    # 캡쳐하려고하면 대충 막 5초뒤에 뻗던데 왜그런진 모르겠음..
     def Run_Algorithm(self):
         self.Stop_Alg.setEnabled(True)
-        pass
+        schedule = Scheduler(self.Proc_List[0:3], int(self.CPU_Number.currentText()))
+        cur_time = 0
+        finish_processes_count = 0
+        AT_idx = 0
+        sorted_processes = sorted(schedule.processes, key= lambda x : x.AT)
+        # 끝난 프로세스가 총 프로세스의 수와 같아질때까지 작동
+        while(finish_processes_count < schedule.process_count):
+            # 현재 시간갱신하는 알고리즘
+            fortext = 'Real Time = '+str(cur_time)+' sec'
+            self.realTimeLabel.setText(fortext)
+            self.realTimeLabel.repaint()
+
+            # 현재 시간에 도착할 프로세스 대기열 큐에 넣어주기
+            for process_idx in range(AT_idx, schedule.process_count):
+                process = sorted_processes[process_idx]
+                if process.AT == cur_time:
+                    print("processe arrived - cur_time:", cur_time, " p_id :", process.process_id)
+                    schedule.ready_queue.append(process)
+                elif process.AT > cur_time:
+                    AT_idx = process_idx
+                    break
+
+            # cpu들을 돌면서
+            for cpu in schedule.cpus:
+                # cpu의 일이 끝났으면
+                if cpu.is_finished(cur_time):
+                    print("processe finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
+                    cpu.process.calculate_finished_process(cur_time)
+                    finish_processes_count += 1
+                    # 일이 끝난 CPU는 쉬게 해준다.
+                    cpu.set_idle()
+                # cpu가 쉬고 있고
+                if cpu.is_idle():
+                    # 대기열에 프로세스가 하나 이상 존재한다면
+                    if len(schedule.ready_queue) >= 1 :
+                        # 대기열 내의 프로세스 중 BT가 가장 작은 프로세스를 선별하여 cpu에 set
+                        process_num = 0
+                        for i in range(1,len(schedule.ready_queue)):
+                            if schedule.ready_queue[i].BT < schedule.ready_queue[process_num].BT:
+                                process_num = i
+                        input_process = schedule.ready_queue.pop(process_num)
+                        cpu.set_process(input_process, cur_time, cur_time + input_process.BT)
+            # Ready_Table 갱신하는 알고리즘
+            # 테이블을 clear하고 새로 채우는 방식임
+            # ready_queue에서 빠지면 Ready_Table에서도 빠지게 그런거 가능하면 그게 더 효율적이긴 할것임..
+            self.Ready_Table.clear()
+            self.Ready_Table.setColumnCount(len(schedule.ready_queue))
+            if len(schedule.ready_queue) == 0:
+                self.Ready_Table.repaint()
+            else:
+                for Queue_Num in range(len(schedule.ready_queue)):
+                    self.Ready_Table.setItem(0, Queue_Num, QTableWidgetItem(schedule.ready_queue[Queue_Num].process_id))
+                    for Set_Num in range(len(self.Proc_List)):
+                        if self.Proc_List[Set_Num][0] == schedule.ready_queue[Queue_Num].process_id:
+                            self.Ready_Table.item(0, Queue_Num).setBackground(QtGui.QColor(self.Proc_List[Set_Num][6], self.Proc_List[Set_Num][7], self.Proc_List[Set_Num][8]))
+                            if self.Proc_List[Set_Num][6] + self.Proc_List[Set_Num][7] +  self.Proc_List[Set_Num][8] < 350:
+                                self.Ready_Table.item(0, Queue_Num).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
+                self.Ready_Table.repaint()
+            # 현재시간 증가
+            cur_time += 1
+            time.sleep(1)
     
 
 if __name__ == '__main__':
