@@ -67,7 +67,7 @@ class MyApp(QWidget):
         self.realTimeLabel = QLabel('Real Time = 0 sec')
         # quantum을 넣는 스핀박스, 초기는 FCFS이기에 비활성화해둠
         self.TQ = QSpinBox()
-        self.TQ.setRange(0, 65535)
+        self.TQ.setRange(1, 65535)
         self.TQ.setDisabled(True)
 
         #Gantt Chart를 표로 보여줄 Rseult_Table선언
@@ -115,7 +115,7 @@ class MyApp(QWidget):
         grid_Line2 = QGridLayout()
         grid_Line2.addWidget(QLabel('Process Number'),0,0)
         grid_Line2.addWidget(self.CPU_Number, 0, 1)
-        grid_Line2.addWidget(QLabel('Time qunaturn'),1,0)
+        grid_Line2.addWidget(QLabel('RR Time Qunaturn'),1,0)
         grid_Line2.addWidget(self.TQ, 1, 1)
         grid_Line2.addWidget(self.Run_Alg,2,0)
         grid_Line2.addWidget(self.Stop_Alg,2,1)
@@ -128,7 +128,7 @@ class MyApp(QWidget):
         # 그냥 이름용 
         vbox_Line3 = QVBoxLayout()
         Ready_Name = QLabel('Ready Queue')
-        Ready_Name.setMaximumHeight(10)
+        Ready_Name.setMaximumHeight(13)
         vbox_Line3.addWidget(Ready_Name)
         vbox_Line3.addWidget(self.Ready_Table)
 
@@ -160,7 +160,7 @@ class MyApp(QWidget):
         self.move(qr.topLeft())
 
     def enableSlot(self):
-        if self.Alg_Select.currentText() == 'RR' or self.Alg_Select.currentText() == 'SRTN':
+        if self.Alg_Select.currentText() == 'RR':
             self.TQ.setEnabled(True)
         else:
             self.TQ.setDisabled(True)
@@ -180,13 +180,13 @@ class MyApp(QWidget):
 
     def add(self):
         # Proc_List에 프로세스 이름, AT, BT 저장, 색상은 랜덤지정
-        self.Proc_List.append([self.ProName.text(),self.AT.value(),self.BT.value(),random.randint(0,255),random.randint(0,255),random.randint(0,255)])
+        self.Proc_List.append([self.ProName.text(),self.AT.value(),self.BT.value(),None,None,None,random.randint(0,255),random.randint(0,255),random.randint(0,255)])
         # 이후 Proc_Table에 프로세스를 띄우도록 함, 열크기 = Proc_List 크기
         self.Proc_Table.setRowCount(len(self.Proc_List))
         for i in range(len(self.Proc_List)):
             self.Proc_Table.setItem(i, 0, QTableWidgetItem(self.Proc_List[i][0]))
-            self.Proc_Table.item(i,0).setBackground(QtGui.QColor(self.Proc_List[i][3], self.Proc_List[i][4], self.Proc_List[i][5]))
-            if self.Proc_List[i][3] + self.Proc_List[i][4] +  self.Proc_List[i][5] < 350:
+            self.Proc_Table.item(i,0).setBackground(QtGui.QColor(self.Proc_List[i][6], self.Proc_List[i][7], self.Proc_List[i][8]))
+            if self.Proc_List[i][6] + self.Proc_List[i][7] +  self.Proc_List[i][8] < 350:
                 self.Proc_Table.item(i,0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
             self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i][1])))
             self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i][2])))
@@ -203,6 +203,7 @@ class MyApp(QWidget):
         self.Proc_List.clear()
         
     def Run_Algorithm(self):
+        self.Stop_Alg.setEnabled(True)
         pass
     
 
