@@ -1,44 +1,37 @@
 # Process-Scheduling-Simulator
+
 > 2021 Operating System_Team Project
 
+### Python Coding Convention
 
+-   [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 
-###  Python Coding Convention
-- [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
+-   [PEP 8 번역본](https://b.luavis.kr/python/python-convention)
 
-- [PEP 8 번역본](https://b.luavis.kr/python/python-convention)
+### Code formatter
 
-
-
-###  Code formatter
-
-- Prettier
-
-
+-   Prettier
 
 ---
 
-
-
 ## 클래스 구조도
-
-
 
 #### Process(프로세스)
 
 #### CPU(프로세서)
+
 #### Scheduler (abstarct class)
 
-- 속성
-  - process_count
-  - process_list
-  - cpu_count
-  - cpu_list
-  - ready_queue
-- 메소드
-  - create_process(self, process_count, AT, BT)
-  - create_cpu(self, cpu_count)
-  - run(self)
+-   속성
+    -   process_count
+    -   process_list
+    -   cpu_count
+    -   cpu_list
+    -   ready_queue
+-   메소드
+    -   create_process(self, process_count, AT, BT)
+    -   create_cpu(self, cpu_count)
+    -   run(self)
 
 ##### FCFS
 
@@ -54,11 +47,7 @@
 
 > 각 스케줄링(FCFS, RR, SPN...) class는 scheduler class를 상속받는다.
 
-
-
 ---
-
-
 
 ## TODO
 
