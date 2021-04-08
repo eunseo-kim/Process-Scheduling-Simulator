@@ -180,7 +180,7 @@ class MyApp(QWidget):
 
     def add(self):
         # Proc_List에 프로세스 이름, AT, BT 저장, 색상은 랜덤지정
-        self.Proc_List.append((self.ProName.text(),self.AT.value(),self.BT.value(),random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+        self.Proc_List.append([self.ProName.text(),self.AT.value(),self.BT.value(),random.randint(0,255),random.randint(0,255),random.randint(0,255)])
         # 이후 Proc_Table에 프로세스를 띄우도록 함, 열크기 = Proc_List 크기
         self.Proc_Table.setRowCount(len(self.Proc_List))
         for i in range(len(self.Proc_List)):
