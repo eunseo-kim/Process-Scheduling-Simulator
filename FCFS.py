@@ -2,10 +2,6 @@ from Scheduler import *
 
 
 class FCFS(Scheduler):
-    # TODO. 이거 똑같은데 이렇게 명시해야되나?
-    def __init__(self, process_input_list, cpu_count):
-        super().__init__(process_input_list, cpu_count)
-
     def run(self):
         cur_time = 0
         finish_processes_count = 0
@@ -27,16 +23,11 @@ class FCFS(Scheduler):
             for cpu in self.cpus:
                 # cpu의 일이 끝났으면
                 if cpu.is_finished(cur_time):
-                    # 만약 프로세스가 실행시간이 남아있으면 다시 대기열 큐에 넣어준다.
-                    if cpu.process.remain_BT > 0:
-                        self.ready_queue.append(cpu.process)
-                        print("processe arrived again - cur_time:", cur_time, " p_id :", cpu.process.process_id)
-                    else:
-                        # 프로세스가 완전히 끝나면 현재시간을 기준으로 각 time을 계산
-                        # 끝난 프로세스의 개수 1 증가
-                        print("processe finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
-                        cpu.process.calculate_finished_process(cur_time)
-                        finish_processes_count += 1
+                    # 프로세스가 완전히 끝나면 현재시간을 기준으로 각 time을 계산
+                    # 끝난 프로세스의 개수 1 증가
+                    print("processe finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
+                    cpu.process.calculate_finished_process(cur_time)
+                    finish_processes_count += 1
                     # 일이 끝난 CPU는 쉬게 해준다.
                     cpu.set_idle()
 
@@ -45,6 +36,6 @@ class FCFS(Scheduler):
                     # 대기열에 프로세스가 하나 이상 존재한다면
                     if self.ready_queue:
                         input_process = self.ready_queue.pop(0)
-                        cpu.set_process(input_process, cur_time, cur_time + input_process.remain_BT)
+                        cpu.set_process(input_process, cur_time, cur_time + input_process.BT)
             # 현재시간 증가
             cur_time += 1
