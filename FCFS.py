@@ -18,11 +18,11 @@ class FCFS(Scheduler):
                 elif process.AT > cur_time:
                     AT_idx = process_idx
                     break
-
+            super().work()
             # cpu들을 돌면서
             for cpu in self.cpus:
                 # cpu의 일이 끝났으면
-                if cpu.is_finished(cur_time):
+                if cpu.is_finished():
                     # 프로세스가 완전히 끝나면 현재시간을 기준으로 각 time을 계산
                     # 끝난 프로세스의 개수 1 증가
                     print("processe finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
@@ -35,7 +35,6 @@ class FCFS(Scheduler):
                 if cpu.is_idle():
                     # 대기열에 프로세스가 하나 이상 존재한다면
                     if self.ready_queue:
-                        input_process = self.ready_queue.pop(0)
-                        cpu.set_process(input_process, cur_time, cur_time + input_process.BT)
+                        cpu.set_process(self.ready_queue.pop(0))
             # 현재시간 증가
             cur_time += 1

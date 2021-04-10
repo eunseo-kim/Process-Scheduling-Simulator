@@ -2,20 +2,23 @@ class CPU:
     def __init__(self, cpu_id):
         self.cpu_id = cpu_id
         self.process = None
-        self.end_time = -1
+        self.work_time = 0
 
     def is_idle(self):
         return self.process is None
 
     def set_idle(self):
         self.process = None
+        self.work_time = 0
 
-    def set_process(self, process, cur_time, end_time):
+
+    def set_process(self, process):
         self.process = process
-        self.end_time = end_time
-        self.process.remain_BT -= end_time - cur_time
 
-    def is_finished(self, cur_time):
-        if cur_time == self.end_time:
-            return True
+    def is_finished(self, quantum = -1):
+        if not self.is_idle():
+            if self.process.remain_BT == 0:
+                return True
+            if quantum != -1 and self.work_time == quantum:
+                return True
         return False

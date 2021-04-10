@@ -23,6 +23,12 @@ class Scheduler(metaclass=ABCMeta):
             cpu_list.append(CPU(i + 1))
         return cpu_list
 
+    def work(self):
+        for cpu in self.cpus:
+            if not cpu.is_idle():
+                cpu.process.remain_BT -= 1
+                cpu.work_time += 1
+
     @abstractmethod
     def run(self):
         pass
