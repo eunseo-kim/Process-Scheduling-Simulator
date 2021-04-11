@@ -10,6 +10,19 @@ class Scheduler(metaclass=ABCMeta):
         self.cpu_count = cpu_count
         self.cpus = self.create_cpus(self.cpu_count)
         self.ready_queue = []
+        # 각 초마다
+        # 레디큐에 어떤 프로세스들이 들어있는지(remain_BT)
+        # 각 CPU에 프로세스가 존재하는지
+        # 0초 => [[P1,P2],[P3, None, P4, None]]
+        # history = [[P1,P2],[P3, None]], [[P2],[P3, None], ...]
+        self.history = []
+
+    def record_history(self, ready_queue, cpus):
+        record = []
+        record.append(ready_queue)
+        record.append([cpu.process for cpu in cpus])
+        record.append(self.processes)
+        self.history.append(record)
 
     def create_processes(self, process_input_list):
         process_list = []

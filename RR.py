@@ -13,6 +13,8 @@ class RR(Scheduler):
         sorted_processes = sorted(self.processes, key=lambda x: x.AT)
         # 끝난 프로세스가 총 프로세스의 수와 같아질때까지 작동
         while finish_processes_count < self.process_count:
+            super().work()
+
             # 현재 시간에 도착할 프로세스 대기열 큐에 넣어주기
             for process_idx in range(AT_idx, self.process_count):
                 process = sorted_processes[process_idx]
@@ -22,8 +24,6 @@ class RR(Scheduler):
                 elif process.AT > cur_time:
                     AT_idx = process_idx
                     break
-
-            super().work()
 
             # cpu들을 돌면서
             for cpu in self.cpus:
@@ -47,5 +47,9 @@ class RR(Scheduler):
                     # 대기열에 프로세스가 하나 이상 존재한다면
                     if self.ready_queue:
                         cpu.set_process(self.ready_queue.pop(0))
+
+            # history 기록하기
+            self.record_history(self.ready_queue[:], self.cpus, self.processes)
+
             # 현재시간 증가
             cur_time += 1
