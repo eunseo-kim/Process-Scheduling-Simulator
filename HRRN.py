@@ -21,9 +21,10 @@ class HRRN(Scheduler):
                     AT_idx = process_idx
                     break
 
+            super().work()
             for cpu in self.cpus:
                 # 만약 cpu의 일이 끝났으면, 끝난 프로세스의 output을 저장하고 cpu를 쉬게 한다.
-                if cpu.is_finished(cur_time):
+                if cpu.is_finished():
                     print("process finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
                     cpu.process.calculate_finished_process(cur_time)
                     finish_processes_count += 1
@@ -39,7 +40,7 @@ class HRRN(Scheduler):
                                 max_response_ratio = response_ratio
                                 next_process = process
                         self.ready_queue.remove(next_process)  # 선택한 프로세스를 대기열 큐에서 삭제
-                        cpu.set_process(next_process, cur_time, cur_time + next_process.BT)
+                        cpu.set_process(next_process)
 
             # ready_queue의 모든 프로세스의 WT를 1씩 추가
             for process in self.ready_queue:

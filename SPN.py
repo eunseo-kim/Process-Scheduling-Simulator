@@ -18,10 +18,11 @@ class SPN(Scheduler):
                     AT_idx = process_idx
                     break
 
+            super().work()
             # cpu들을 돌면서
             for cpu in self.cpus:
                 # cpu의 일이 끝났으면
-                if cpu.is_finished(cur_time):
+                if cpu.is_finished():
                     print("processe finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
                     cpu.process.calculate_finished_process(cur_time)
                     finish_processes_count += 1
@@ -30,13 +31,12 @@ class SPN(Scheduler):
                 # cpu가 쉬고 있고
                 if cpu.is_idle():
                     # 대기열에 프로세스가 하나 이상 존재한다면
-                    if len(self.ready_queue) >= 1 :
+                    if self.ready_queue:
                         # 대기열 내의 프로세스 중 BT가 가장 작은 프로세스를 선별하여 cpu에 set
                         process_num = 0
                         for i in range(1,len(self.ready_queue)):
                             if self.ready_queue[i].BT < self.ready_queue[process_num].BT:
                                 process_num = i
-                        input_process = self.ready_queue.pop(process_num)
-                        cpu.set_process(input_process, cur_time, cur_time + input_process.BT)
+                        cpu.set_process(self.ready_queue.pop(process_num))
             # 현재시간 증가
             cur_time += 1

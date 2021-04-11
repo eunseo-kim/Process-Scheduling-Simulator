@@ -4,13 +4,13 @@
 
 ### Python Coding Convention
 
--   [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
+- [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 
--   [PEP 8 번역본](https://b.luavis.kr/python/python-convention)
+- [PEP 8 번역본](https://b.luavis.kr/python/python-convention)
 
 ### Code formatter
 
--   Prettier
+- Prettier
 
 ---
 
@@ -22,16 +22,16 @@
 
 #### Scheduler (abstarct class)
 
--   속성
-    -   process_count
-    -   process_list
-    -   cpu_count
-    -   cpu_list
-    -   ready_queue
--   메소드
-    -   create_process(self, process_count, AT, BT)
-    -   create_cpu(self, cpu_count)
-    -   run(self)
+- 속성
+  - process_count
+  - process_list
+  - cpu_count
+  - cpu_list
+  - ready_queue
+- 메소드
+  - create_process(self, process_count, AT, BT)
+  - create_cpu(self, cpu_count)
+  - run(self)
 
 ##### FCFS
 

@@ -23,10 +23,12 @@ class RR(Scheduler):
                     AT_idx = process_idx
                     break
 
+            super().work()
+
             # cpu들을 돌면서
             for cpu in self.cpus:
                 # cpu의 일이 끝났으면
-                if cpu.is_finished(cur_time):
+                if cpu.is_finished(self.quantum):
                     # 만약 프로세스가 실행시간이 남아있으면 다시 대기열 큐에 넣어준다.
                     if cpu.process.remain_BT > 0:
                         self.ready_queue.append(cpu.process)
@@ -44,11 +46,6 @@ class RR(Scheduler):
                 if cpu.is_idle():
                     # 대기열에 프로세스가 하나 이상 존재한다면
                     if self.ready_queue:
-                        input_process = self.ready_queue.pop(0)
-                        # 현재 넣을 프로세스의 남은 실행 시간이 RR의 quantum보다 작으면
-                        # 남은 실행 시간이 일할시간, 아니면 quantum이 일할 시간이 된다.
-                        remain_BT = input_process.remain_BT
-                        work_time = self.quantum if remain_BT >= self.quantum else remain_BT
-                        cpu.set_process(input_process, cur_time, cur_time + work_time)
+                        cpu.set_process(self.ready_queue.pop(0))
             # 현재시간 증가
             cur_time += 1
