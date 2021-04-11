@@ -11,6 +11,8 @@ class HRRN(Scheduler):
         AT_idx = 0
         sorted_processes = sorted(self.processes, key=lambda x: x.AT)
         while finish_processes_count < self.process_count:
+            super().work()
+
             # 현재 시간과 AT가 일치하는 프로세스를 대기열 큐에 넣어주기
             for process_idx in range(AT_idx, self.process_count):
                 process = sorted_processes[process_idx]
@@ -21,7 +23,6 @@ class HRRN(Scheduler):
                     AT_idx = process_idx
                     break
 
-            super().work()
             for cpu in self.cpus:
                 # 만약 cpu의 일이 끝났으면, 끝난 프로세스의 output을 저장하고 cpu를 쉬게 한다.
                 if cpu.is_finished():
@@ -41,6 +42,9 @@ class HRRN(Scheduler):
                                 next_process = process
                         self.ready_queue.remove(next_process)  # 선택한 프로세스를 대기열 큐에서 삭제
                         cpu.set_process(next_process)
+
+            # history 기록하기
+            self.record_history(self.ready_queue[:], self.cpus, self.processes)
 
             # ready_queue의 모든 프로세스의 WT를 1씩 추가
             for process in self.ready_queue:
