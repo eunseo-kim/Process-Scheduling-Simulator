@@ -6,7 +6,7 @@ from CPU import *
 class Scheduler(metaclass=ABCMeta):
     def __init__(self, process_input_list, cpu_count):
         self.process_count = len(process_input_list)
-        self.processes = self.create_processes(process_input_list)
+        self.processes = process_input_list
         self.cpu_count = cpu_count
         self.cpus = self.create_cpus(self.cpu_count)
         self.ready_queue = []
@@ -17,11 +17,11 @@ class Scheduler(metaclass=ABCMeta):
         # history = [[P1,P2],[P3, None]], [[P2],[P3, None], ...]
         self.history = []
 
-    def record_history(self, ready_queue, cpus):
+    def record_history(self, ready_queue, cpus, processes):
         record = []
         record.append(ready_queue)
         record.append([cpu.process for cpu in cpus])
-        record.append(self.processes)
+        record.append(processes)
         self.history.append(record)
 
     def create_processes(self, process_input_list):
