@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 import time
 from PyQt5.QtCore import Qt
+import copy
 
 class MyApp(QWidget):
     def __init__(self):
@@ -217,10 +218,22 @@ class MyApp(QWidget):
 
     # 알고리즘 실행
     def Run_Algorithm(self):
-        # 아직 알고리즘 구분 안넣고 RR을 시험삼아 돌림, 그래서 Quantum설정 하려면 RR선택하고 돌려볼것
-        scheduler = RR(self.Proc_List, int(self.CPU_Number.currentText()), self.TQ.value())
+        # 한번 설정한 프로세스 목록을 계속해서 돌릴 상황을 가정해야하기 떄문에 깊은 복사로 PList에 가져와서 실행
+        PList = copy.deepcopy(self.Proc_List)
+        if self.Alg_Select.currentText() == "FCFS":
+            scheduler = FCFS(PList, int(self.CPU_Number.currentText()))
+        elif self.Alg_Select.currentText() == "RR":
+            scheduler = RR(PList, int(self.CPU_Number.currentText()), self.TQ.value())
+        elif self.Alg_Select.currentText() == "SPN":
+            scheduler = SPN(PList, int(self.CPU_Number.currentText()))
+        elif self.Alg_Select.currentText() == "SRTN":
+            scheduler = SRTN(PList, int(self.CPU_Number.currentText()))
+        elif self.Alg_Select.currentText() == "HRRN":
+            scheduler = HRRN(PList, int(self.CPU_Number.currentText()))
+        elif self.Alg_Select.currentText() == "YOSA":
+            scheduler = YOSA(PList, int(self.CPU_Number.currentText()))
         scheduler.run()
-        # 실행 이후 히스토리를 self.history에 저장, 근데 지금 생각하니 안해도될거같음
+        # 실행 이후 히스토리를 self.history에 저장
         self.history = scheduler.history
         # len(self.history) = 경과 시간, 경과 시간을 탐색할 수 있게 슬라이더를 활성화하고 슬라이더의 범위 지정, 초기는 0초
         self.history_slider.setEnabled(True)
