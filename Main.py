@@ -1,5 +1,9 @@
 from RR import *
 from FCFS import *
+from HRRN import *
+from SPN import *
+from SRTN import *
+# from YOSA import *
 
 
 def print_history(history):

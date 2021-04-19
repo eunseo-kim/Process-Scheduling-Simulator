@@ -26,8 +26,9 @@ class Scheduler(metaclass=ABCMeta):
 
     def create_processes(self, process_input_list):
         process_list = []
-        for p in process_input_list:
-            process_list.append(Process(p[0], p[1], p[2]))
+        for idx, p in enumerate(process_input_list):
+            new_process = Process(p[0], p[1], p[2], idx)
+            process_list.append(new_process)
         return process_list
 
     def create_cpus(self, cpu_count):
