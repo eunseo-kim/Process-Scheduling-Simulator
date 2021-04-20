@@ -397,7 +397,7 @@ class MyApp(QWidget):
                         )
                     )
 
-            # print("gantt:", self.history[seconds][1][cpu].process_id)
+        self.Gantt_Table.scrollToItem(self.Gantt_Table.item(0, second - 1))
         # 결과 테이블에 프로세스의 현황을 넣는 과정, 근데 계산 끝난 결과로만 출력이 되는데 왜 그러는지 잘 모르겠음.
         # 굳이 매초마다 갱신할 필요가 없으면 슬라이더 옮길때마다 매번 갱신할 필요가 없어서 이부분은 지워도 괜찮음.
         for process in range(process_count):

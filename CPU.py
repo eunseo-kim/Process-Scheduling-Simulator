@@ -11,14 +11,13 @@ class CPU:
         self.process = None
         self.work_time = 0
 
-
     def set_process(self, process):
         self.process = process
 
-    def is_finished(self, quantum = -1):
+    def is_finished(self, quantum=-1):
         if not self.is_idle():
             if self.process.remain_BT == 0:
                 return True
-            if quantum != -1 and self.work_time == quantum:
+            if self.work_time == quantum:
                 return True
         return False
