@@ -389,10 +389,12 @@ class MyApp(QWidget):
 
         # ==================================================================
         # history CPU를 매초마다 탐색해서 CPU내에 들어간 프로세스를 넣는 과정
+        max_len_cpu = 0
         for seconds in range(second):
             for cpu in range(cpu_count):
                 # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
                 if self.history[seconds + 1][1][cpu]:
+                    max_len_cpu = cpu
                     self.Gantt_Table.setItem(
                         cpu, seconds, QTableWidgetItem(self.history[seconds + 1][1][cpu].process_id)
                     )
@@ -405,7 +407,7 @@ class MyApp(QWidget):
                         )
                     )
 
-        self.Gantt_Table.scrollToItem(self.Gantt_Table.item(0, second - 1))
+        self.Gantt_Table.scrollToItem(self.Gantt_Table.item(max_len_cpu, second - 1))
         # 결과 테이블에 프로세스의 현황을 넣는 과정, 근데 계산 끝난 결과로만 출력이 되는데 왜 그러는지 잘 모르겠음.
         # 굳이 매초마다 갱신할 필요가 없으면 슬라이더 옮길때마다 매번 갱신할 필요가 없어서 이부분은 지워도 괜찮음.
         for process in range(process_count):
