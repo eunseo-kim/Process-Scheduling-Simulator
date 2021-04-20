@@ -22,10 +22,17 @@ class MyApp(QWidget):
     # 수정 : font
     def change_font(self):
         font = QtGui.QFont()
-        font.setBold(True)
+        # 폰트 없으시면 주석 처리하세요!
+        # font.setFamily("카카오 Regular")
+        font.setFamily("Consolas")
+        font.setPointSize(10)
+        # font.setBold(True)
         self.setFont(font)
 
     def initUI(self):
+        self.resize(1400, 900)
+        self.center()
+
         # 알고리즘 종류를 선택핧 Alg_Select를 콤보박스로 구현
         # 실행, 혹은 정지 도중에 알고리즘을 바꿨을때 어찌처리할지도 생각해야할듯? Reset 함수 부르면 될거같긴 함, 아니면 실행중엔 Stop을 제외한 버튼들 비활성 걸어놓던가
         self.Alg_Select = QComboBox(self)
@@ -46,6 +53,7 @@ class MyApp(QWidget):
         self.Proc_Table = QTableWidget(self)
         self.Proc_Table.setColumnCount(3)
         self.Proc_Table.setHorizontalHeaderLabels(["Process Name", "Arrival Time", "Burst Time"])
+
         self.Proc_Table.verticalHeader().setVisible(False)
         header = self.Proc_Table.horizontalHeader()
         for column_idx in range(self.column_count):
@@ -123,9 +131,9 @@ class MyApp(QWidget):
 
         # 두번째 줄 오른편의 그리드, cpu_count, TQ, Run_Alg, Stop_Alg을 그리드 레이아웃에 추가
         grid_Line2 = QGridLayout()
-        grid_Line2.addWidget(QLabel("CPU Count"), 0, 0)
+        grid_Line2.addWidget(QLabel("CPU"), 0, 0)
         grid_Line2.addWidget(self.cpu_count, 0, 1)
-        grid_Line2.addWidget(QLabel("RR Time Quantum"), 1, 0)
+        grid_Line2.addWidget(QLabel("Quantum"), 1, 0)
         grid_Line2.addWidget(self.TQ, 1, 1)
         grid_Line2.addWidget(self.Run_Alg, 2, 0)
 
@@ -156,7 +164,7 @@ class MyApp(QWidget):
         vbox_main.addWidget(self.Gantt_Table)
         vbox_main.addWidget(self.Result_Table)
         # vbox_main.addStretch(3)
-        self.setWindowTitle("Test")
+        self.setWindowTitle("Process Scheduling Simulator")
         # setGeometry가 크기랑 위치 지정하는건데 잘몰르겟음 필요한가, 센터로 화면 가운데 위치지정중임
         # self.setGeometry(0, 0, 800, 600)
         self.center()
