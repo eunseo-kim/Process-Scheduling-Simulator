@@ -210,8 +210,6 @@ class MyApp(QWidget):
             self.Proc_Table.item(i, 0).setBackground(
                 QtGui.QColor(self.Proc_List[i].Color[0], self.Proc_List[i].Color[1], self.Proc_List[i].Color[2])
             )
-            # if self.Proc_List[i].Color[0] + self.Proc_List[i].Color[1] + self.Proc_List[i].Color[2] < 350:
-            #     self.Proc_Table.item(i, 0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
             self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].AT)))
             self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i].BT)))
         # 초기화 부분
@@ -230,8 +228,6 @@ class MyApp(QWidget):
             self.Proc_Table.item(i, 0).setBackground(
                 QtGui.QColor(self.Proc_List[i].Color[0], self.Proc_List[i].Color[1], self.Proc_List[i].Color[2])
             )
-            # if self.Proc_List[i].Color[0] + self.Proc_List[i].Color[1] + self.Proc_List[i].Color[2] < 350:
-            #     self.Proc_Table.item(i, 0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
             self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].AT)))
             self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i].BT)))
         # 초기화 부분
@@ -283,31 +279,42 @@ class MyApp(QWidget):
         self.history_slider.setValue(0)
         # 이후 함수들은 0초를 기준으로 화면에 띄우는것, slider_Control과 거이 동일하기 때문에 거기에 주석을 달겠습니다.
         self.Ready_Table.setColumnCount(len(self.history[0][0]))
-        print("Debug:", len(self.history))
         self.Gantt_Table.setColumnCount(0)
         self.Result_Table.setRowCount(len(self.history[0][2]))
-        for Q_process in range(len(self.history[0][0])):
-            self.Ready_Table.setItem(0, Q_process, QTableWidgetItem(self.history[0][0][Q_process].process_id))
-            self.Ready_Table.item(0, Q_process).setBackground(
+
+        ready_queue_count = len(self.history[0][0])
+        cpu_count = len(self.history[0][1])
+        process_count = len(self.history[0][2])
+
+        for queue_process_idx in range(ready_queue_count):
+            self.Ready_Table.setItem(
+                0, queue_process_idx, QTableWidgetItem(self.history[0][0][queue_process_idx].process_id)
+            )
+            self.Ready_Table.item(0, queue_process_idx).setBackground(
                 QtGui.QColor(
-                    self.history[0][0][Q_process].Color[0],
-                    self.history[0][0][Q_process].Color[1],
-                    self.history[0][0][Q_process].Color[2],
+                    self.history[0][0][queue_process_idx].Color[0],
+                    self.history[0][0][queue_process_idx].Color[1],
+                    self.history[0][0][queue_process_idx].Color[2],
                 )
             )
-        for cpu in range(len(self.history[0][1])):
-            if self.history[0][1][cpu]:
-                print("CHECK:", self.history[0][1][cpu].process_id)
-                self.Gantt_Table.setItem(cpu, 0, QTableWidgetItem(self.history[0][1][cpu].process_id))
-                if self.Gantt_Table.item(cpu, 0):
-                    self.Gantt_Table.item(cpu, 0).setBackground(
-                        QtGui.QColor(
-                            self.history[0][1][cpu].Color[0],
-                            self.history[0][1][cpu].Color[1],
-                            self.history[0][1][cpu].Color[2],
-                        )
-                    )
-        for process in range(len(self.history[0][2])):
+            # DEBUG
+            # print("queue:", self.history[0][0][queue_process_idx].process_id)
+
+        # 처음에는 간트 차트 출력 X
+        # for cpu in range(cpu_count):
+        #     if self.history[1][1][cpu]:
+        #         print("CHECK:", self.history[1][1][cpu].process_id)
+        #         self.Gantt_Table.setItem(cpu, 0, QTableWidgetItem(self.history[1][1][cpu].process_id))
+        #         self.Gantt_Table.item(cpu, 0).setBackground(
+        #             QtGui.QColor(
+        #                 self.history[1][1][cpu].Color[0],
+        #                 self.history[1][1][cpu].Color[1],
+        #                 self.history[1][1][cpu].Color[2],
+        #             )
+        #         )
+        # print("gantt:", self.history[0][1][cpu].process_id)
+
+        for process in range(process_count):
             self.Result_Table.setItem(process, 0, QTableWidgetItem(self.history[0][2][process].process_id))
             self.Result_Table.setItem(process, 1, QTableWidgetItem(str(self.history[0][2][process].AT)))
             self.Result_Table.setItem(process, 2, QTableWidgetItem(str(self.history[0][2][process].BT)))
@@ -321,6 +328,8 @@ class MyApp(QWidget):
                     self.history[0][2][process].Color[2],
                 )
             )
+            # print("result:", self.history[0][2][process].process_id)
+
         self.Ready_Table.repaint()
         self.Gantt_Table.repaint()
         self.Result_Table.repaint()
@@ -328,52 +337,64 @@ class MyApp(QWidget):
     def slider_Control(self):
         # 초 = 슬라이더의 값
         second = self.history_slider.value()
+        ready_queue_count = len(self.history[second][0])
+        cpu_count = len(self.history[0][1])
+        process_count = len(self.history[0][2])
+
         # 표의 너비 지정
         self.Ready_Table.setColumnCount(len(self.history[second][0]))
         self.Gantt_Table.setColumnCount(second)
         self.Result_Table.setRowCount(len(self.history[second][2]))
         # 레디 큐에 저장된 프로세스를 Ready_Table에 넣는 과정
-        for Q_process in range(len(self.history[second][0])):
-            self.Ready_Table.setItem(0, Q_process, QTableWidgetItem(self.history[second][0][Q_process].process_id))
-            self.Ready_Table.item(0, Q_process).setBackground(
+        for queue_process_idx in range(ready_queue_count):
+            self.Ready_Table.setItem(
+                0, queue_process_idx, QTableWidgetItem(self.history[second][0][queue_process_idx].process_id)
+            )
+            self.Ready_Table.item(0, queue_process_idx).setBackground(
                 QtGui.QColor(
-                    self.history[second][0][Q_process].Color[0],
-                    self.history[second][0][Q_process].Color[1],
-                    self.history[second][0][Q_process].Color[2],
+                    self.history[second][0][queue_process_idx].Color[0],
+                    self.history[second][0][queue_process_idx].Color[1],
+                    self.history[second][0][queue_process_idx].Color[2],
+                )
+            )
+            # print("queue:", self.history[second][0][queue_process_idx].process_id)
+
+        # ==================================================================
+        # history CPU를 매초마다 탐색해서 CPU내에 들어간 프로세스를 넣는 과정
+        for seconds in range(second):
+            for cpu in range(cpu_count):
+                # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
+                if self.history[seconds + 1][1][cpu]:
+                    self.Gantt_Table.setItem(
+                        cpu, seconds, QTableWidgetItem(self.history[seconds + 1][1][cpu].process_id)
+                    )
+                    # 이거 if 안넣으면 NoneType떠서 넣긴했는데 이유 솔직히 모르겠음.. 저도 모르겠네요...
+                    self.Gantt_Table.item(cpu, seconds).setBackground(
+                        QtGui.QColor(
+                            self.history[seconds + 1][1][cpu].Color[0],
+                            self.history[seconds + 1][1][cpu].Color[1],
+                            self.history[seconds + 1][1][cpu].Color[2],
+                        )
+                    )
+
+            # print("gantt:", self.history[seconds][1][cpu].process_id)
+        # 결과 테이블에 프로세스의 현황을 넣는 과정, 근데 계산 끝난 결과로만 출력이 되는데 왜 그러는지 잘 모르겠음.
+        # 굳이 매초마다 갱신할 필요가 없으면 슬라이더 옮길때마다 매번 갱신할 필요가 없어서 이부분은 지워도 괜찮음.
+        for process in range(process_count):
+            self.Result_Table.setItem(process, 0, QTableWidgetItem(self.history[second][2][process].process_id))
+            self.Result_Table.setItem(process, 1, QTableWidgetItem(str(self.history[second][2][process].AT)))
+            self.Result_Table.setItem(process, 2, QTableWidgetItem(str(self.history[second][2][process].BT)))
+            self.Result_Table.setItem(process, 3, QTableWidgetItem(str(self.history[second][2][process].WT)))
+            self.Result_Table.setItem(process, 4, QTableWidgetItem(str(self.history[second][2][process].TT)))
+            self.Result_Table.setItem(process, 5, QTableWidgetItem(str(self.history[second][2][process].NTT)))
+            self.Result_Table.item(process, 0).setBackground(
+                QtGui.QColor(
+                    self.history[second][2][process].Color[0],
+                    self.history[second][2][process].Color[1],
+                    self.history[second][2][process].Color[2],
                 )
             )
 
-        # history CPU를 매초마다 탐색해서 CPU내에 들어간 프로세스를 넣는 과정
-        for seconds in range(0, second + 1):
-            for cpu in range(len(self.history[0][1])):
-                # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
-                if self.history[seconds][1][cpu]:
-                    self.Gantt_Table.setItem(cpu, seconds, QTableWidgetItem(self.history[seconds][1][cpu].process_id))
-                    # 이거 if 안넣으면 NoneType떠서 넣긴했는데 이유 솔직히 모르겠음.. 저도 모르겠네요...
-                    if self.Gantt_Table.item(cpu, seconds):
-                        self.Gantt_Table.item(cpu, seconds).setBackground(
-                            QtGui.QColor(
-                                self.history[seconds][1][cpu].Color[0],
-                                self.history[seconds][1][cpu].Color[1],
-                                self.history[seconds][1][cpu].Color[2],
-                            )
-                        )
-        # 결과 테이블에 프로세스의 현황을 넣는 과정, 근데 계산 끝난 결과로만 출력이 되는데 왜 그러는지 잘 모르겠음.
-        # 굳이 매초마다 갱신할 필요가 없으면 슬라이더 옮길때마다 매번 갱신할 필요가 없어서 이부분은 지워도 괜찮음.
-        # for process in range(len(self.history[0][2])):
-        #     self.Result_Table.setItem(process, 0, QTableWidgetItem(self.history[second][2][process].process_id))
-        #     self.Result_Table.setItem(process, 1, QTableWidgetItem(str(self.history[second][2][process].AT)))
-        #     self.Result_Table.setItem(process, 2, QTableWidgetItem(str(self.history[second][2][process].BT)))
-        #     self.Result_Table.setItem(process, 3, QTableWidgetItem(str(self.history[second][2][process].WT)))
-        #     self.Result_Table.setItem(process, 4, QTableWidgetItem(str(self.history[second][2][process].TT)))
-        #     self.Result_Table.setItem(process, 5, QTableWidgetItem(str(self.history[second][2][process].NTT)))
-        #     self.Result_Table.item(process, 0).setBackground(
-        #         QtGui.QColor(
-        #             self.history[second][2][process].Color[0],
-        #             self.history[second][2][process].Color[1],
-        #             self.history[second][2][process].Color[2],
-        #         )
-        #     )
         self.Ready_Table.repaint()
         self.Gantt_Table.repaint()
         self.Result_Table.repaint()
