@@ -23,7 +23,8 @@ class SRTN(Scheduler):
                     AT_idx = process_idx
                     break
 
-            super().work()
+            # history 기록하기
+            self.record_history(self.ready_queue[:], self.cpus, self.processes)
 
             for cpu in self.cpus:
                 self.ready_queue = sorted(self.ready_queue, key=lambda x: x.remain_BT)
@@ -63,7 +64,5 @@ class SRTN(Scheduler):
                     else:
                         break
 
-            # history 기록하기
-            self.record_history(self.ready_queue[:], self.cpus, self.processes)
-
             cur_time += 1
+            super().work()
