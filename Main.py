@@ -3,6 +3,7 @@ from FCFS import *
 from HRRN import *
 from SPN import *
 from SRTN import *
+
 # from YOSA import *
 
 
@@ -10,11 +11,10 @@ def print_history(history):
     # ready_queue_record, cpu_record
     for cur_time, record in enumerate(history):
         print("[{0}]".format(cur_time))
-        # print("ready_queue : ".format(" ".join(map(lambda x: x.process_id, record[0]))))
-        print("ready_queue : ")
-        # for process in record[0]:
-        # print(process.process_id)
-        # print(process.process_id, end=" ")
+        print("ready_queue : ", end="")
+        for ready_queue_process in record[0]:
+            print(ready_queue_process.process_id, end=" ")
+        print()
         for cpu_idx, cpu_process in enumerate(record[1]):
             print("cpu {0}: {1}".format(cpu_idx + 1, cpu_process.process_id if cpu_process else None))
 
@@ -54,8 +54,20 @@ def test(process_input_list, cpu_count):
 
 
 def main():
-    test([["P1", 0, 3], ["P2", 1, 7], ["P3", 3, 2], ["P4", 5, 5], ["P5", 6, 3]], 1)
-    # test([["P1", 0, 3], ["P2", 1, 7], ["P3", 3, 2], ["P4", 5, 5], ["P5", 6, 3]], 2)
+    test(
+        [
+            Process("p0", 8, 7, 0),
+            Process("p1", 3, 4, 1),
+            Process("p2", 4, 7, 2),
+            Process("p3", 9, 5, 3),
+            Process("p4", 1, 6, 4),
+            Process("p5", 0, 6, 5),
+            Process("p6", 9, 6, 6),
+            Process("p7", 0, 7, 7),
+            Process("p8", 1, 7, 8),
+        ],
+        3,
+    )  # test([["P1", 0, 3], ["P2", 1, 7], ["P3", 3, 2], ["P4", 5, 5], ["P5", 6, 3]], 2)
 
     # print("[TEST 02]")
     # test([["P1", 0, 3], ["P2", 2, 7], ["P3", 3, 2], ["P4", 5, 5], ["P5", 6, 3]], 1)

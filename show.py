@@ -191,12 +191,30 @@ class MyApp(QWidget):
     # 수정 : 디버깅용(자동 입력 해줌 - 프로세스 개수, AT, BT까지 자동으로 입력)
     def test(self):
         self.Run_Alg.setEnabled(True)
-        # Proc_List에 프로세스를 저장.
+        # Proc_List에 프로세스를 저장.======================
         for process_id in range(random.randrange(1, 16)):
             self.Proc_List.append(
                 Process("p" + str(process_id), random.randrange(0, 10), random.randrange(1, 8), process_id)
             )
-
+        # ===============================================
+        # 테스트 값 내가 넣어줄때-----------
+        # self.Proc_List = [
+        #     Process("p0", 8, 7, 0),
+        #     Process("p1", 3, 4, 1),
+        #     Process("p2", 4, 7, 2),
+        #     Process("p3", 9, 5, 3),
+        #     Process("p4", 1, 6, 4),
+        #     Process("p5", 0, 6, 5),
+        #     Process("p6", 9, 6, 6),
+        #     Process("p7", 0, 7, 7),
+        #     Process("p8", 1, 7, 8),
+        # ]
+        # ----------------------------
+        print("[self.Proc_List]")
+        print("[", end="")
+        for idx, process in enumerate(self.Proc_List):
+            print("Process('{0}', {1}, {2}, {3}),".format(process.process_id, process.AT, process.BT, idx), end="")
+        print("]")
         # 기본
         # self.Proc_List.append(Process("p1", 0, 3))
         # self.Proc_List.append(Process("p2", 1, 7))
@@ -210,6 +228,8 @@ class MyApp(QWidget):
             self.Proc_Table.item(i, 0).setBackground(
                 QtGui.QColor(self.Proc_List[i].Color[0], self.Proc_List[i].Color[1], self.Proc_List[i].Color[2])
             )
+            # if self.Proc_List[i].Color[0] + self.Proc_List[i].Color[1] + self.Proc_List[i].Color[2] < 350:
+            #     self.Proc_Table.item(i, 0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
             self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].AT)))
             self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i].BT)))
         # 초기화 부분

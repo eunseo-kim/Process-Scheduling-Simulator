@@ -43,6 +43,15 @@ class Scheduler(metaclass=ABCMeta):
                 cpu.process.remain_BT -= 1
                 cpu.work_time += 1
 
+    # 쉬게되는 CPU 개수 - 레디큐 프로세스 개수 만큼
+    # 일이 끝나도 그 프로세스는 빼지 않는다.
+    def get_cpu_keep_working_count(self, quantum=-1):
+        cpu_work_continue_count = 0
+        for cpu in self.cpus:
+            if cpu.is_finished(quantum) or cpu.is_idle():
+                cpu_work_continue_count += 1
+        return cpu_work_continue_count - len(self.ready_queue)
+
     @abstractmethod
     def run(self):
         pass

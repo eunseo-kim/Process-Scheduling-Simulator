@@ -26,14 +26,22 @@ class RR(Scheduler):
             # history 기록하기
             self.record_history(self.ready_queue[:], self.cpus, self.processes)
 
+            cpu_keep_working_count = self.get_cpu_keep_working_count(self.quantum)
             # cpu들을 돌면서
             for cpu in self.cpus:
                 # cpu의 일이 끝났으면
                 if cpu.is_finished(self.quantum):
                     # 만약 프로세스가 실행시간이 남아있으면 다시 대기열 큐에 넣어준다.
+                    # 대기열의 프로세스 개수가 놀고 있는 CPU 개수 이하이면 그대로 둔다. 아니면 진행
                     if cpu.process.remain_BT > 0:
-                        self.ready_queue.append(cpu.process)
-                        print("processe arrived again - cur_time:", cur_time, " p_id :", cpu.process.process_id)
+                        # 일을 계속할 수 있으면 계속하게 한다.
+                        if cpu_keep_working_count > 0:
+                            cpu_keep_working_count -= 1
+                            cpu.work_time = 0
+                            continue
+                        else:
+                            self.ready_queue.append(cpu.process)
+                            print("processe arrived again - cur_time:", cur_time, " p_id :", cpu.process.process_id)
                     else:
                         # 프로세스가 완전히 끝나면 현재시간을 기준으로 각 time을 계산
                         # 끝난 프로세스의 개수 1 증가
