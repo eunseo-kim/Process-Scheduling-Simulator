@@ -2,7 +2,7 @@ import random
 
 
 class Process:
-    def __init__(self, process_id, AT, BT, color_idx):
+    def __init__(self, process_id, AT, BT, color_idx, sel_CPU = None):
         self.process_id = process_id
         self.AT = AT  # arrival time
         self.BT = BT  # burst time
@@ -10,7 +10,7 @@ class Process:
         self.WT = 0  # waiting time(TT - BT)
         self.TT = 0  # turnaround time
         self.NTT = 0  # normalized turnaround time(TT/BT)
-
+        self.select_CPU = sel_CPU
         # 수정 : color_palette 추가
         self.color_palette = [
             [255, 200, 162],
