@@ -3,8 +3,8 @@ from FCFS import *
 from HRRN import *
 from SPN import *
 from SRTN import *
-
-# from YOSA import *
+from YOSA import *
+from Subject import *
 
 
 def print_history(history):
@@ -53,6 +53,24 @@ def test(process_input_list, cpu_count):
         print_history(scheduler.history)
 
 
+def test_YOSA():
+    subject_input_list = [
+        Subject("알고리즘", 4, 5, 0, 0),
+        Subject("웹프", 3, 7, 1, 0),
+        Subject("직능훈", 2, 4, 2, 0),
+        Subject("알고리즘", 4, 5, 3, 1),
+        Subject("C++", 4, 6, 4, 1),
+        Subject("웹프", 3, 3, 5, 1),
+        Subject("알고리즘", 4, 5, 6, 2),
+        Subject("데베설", 3, 8, 7, 2),
+        Subject("운영체제", 2, 4, 8, 2),
+    ]
+
+    student_count = 3
+    yosa = YOSA(subject_input_list, student_count)
+    yosa.run()
+
+
 def main():
     test(
         [
@@ -78,4 +96,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    test_YOSA()

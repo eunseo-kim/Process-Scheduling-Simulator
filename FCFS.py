@@ -18,7 +18,7 @@ class FCFS(Scheduler):
                 elif process.AT > cur_time:
                     AT_idx = process_idx
                     break
-                
+
             # history 기록하기
             self.record_history(self.ready_queue[:], self.cpus, self.processes)
 
@@ -39,11 +39,6 @@ class FCFS(Scheduler):
                     # 대기열에 프로세스가 하나 이상 존재한다면
                     if self.ready_queue:
                         cpu.set_process(self.ready_queue.pop(0))
-
-            for process in self.processes:
-                process.calculate_finished_process(cur_time)
-                # print(process.AT, process.BT, process.WT, process.TT)
-
 
             # 현재시간 증가
             super().work()
