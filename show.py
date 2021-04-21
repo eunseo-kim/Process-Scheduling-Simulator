@@ -206,17 +206,18 @@ class MyApp(QWidget):
             )
         # ===============================================
         # 테스트 값 내가 넣어줄때-----------
-        # self.Proc_List = [
-        #     Process("p0", 8, 7, 0),
-        #     Process("p1", 3, 4, 1),
-        #     Process("p2", 4, 7, 2),
-        #     Process("p3", 9, 5, 3),
-        #     Process("p4", 1, 6, 4),
-        #     Process("p5", 0, 6, 5),
-        #     Process("p6", 9, 6, 6),
-        #     Process("p7", 0, 7, 7),
-        #     Process("p8", 1, 7, 8),
-        # ]
+        self.Proc_List = [
+            Process("p0", 1, 4, 0),
+            Process("p1", 2, 3, 1),
+            Process("p2", 2, 3, 2),
+            Process("p3", 2, 3, 3),
+            Process("p4", 2, 3, 4),
+            Process("p5", 0, 2, 5),
+            Process("p6", 0, 2, 6),
+            Process("p7", 0, 2, 7),
+            Process("p8", 1, 4, 8),
+            Process("p9", 1, 4, 9),
+        ]
         # ----------------------------
         print("[self.Proc_List]")
         print("[", end="")
