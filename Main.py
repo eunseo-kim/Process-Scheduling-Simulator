@@ -15,8 +15,8 @@ def print_history(history):
         for ready_queue_process in record[0]:
             print(ready_queue_process.process_id, end=" ")
         print()
-        for cpu_idx, cpu_process in enumerate(record[1]):
-            print("cpu {0}: {1}".format(cpu_idx + 1, cpu_process.process_id if cpu_process else None))
+        for idx, cpu_process in enumerate(record[1]):
+            print("cpu {0}: {1}".format(idx + 1, cpu_process.process_id if cpu_process else None))
 
 
 def print_process_time_table(processes):
@@ -55,20 +55,21 @@ def test(process_input_list, cpu_count):
 
 def test_YOSA():
     subject_input_list = [
-        Subject("알고리즘", 4, 5, 0, 0),
+        Subject("알고리즘", 4, 8, 0, 0),
         Subject("웹프", 3, 7, 1, 0),
         Subject("직능훈", 2, 4, 2, 0),
-        Subject("알고리즘", 4, 5, 3, 1),
-        Subject("C++", 4, 6, 4, 1),
-        Subject("웹프", 3, 3, 5, 1),
-        Subject("알고리즘", 4, 5, 6, 2),
-        Subject("데베설", 3, 8, 7, 2),
-        Subject("운영체제", 2, 4, 8, 2),
+        # Subject("알고리즘", 4, 5, 3, 1),
+        Subject("C++", 4, 4, 4, 1),
+        # Subject("웹프", 3, 3, 5, 1),
+        # Subject("알고리즘", 4, 4, 6, 2),
+        # Subject("데베설", 3, 5, 7, 2),
+        # Subject("운영체제", 2, 6, 8, 2),
     ]
 
-    student_count = 3
-    yosa = YOSA(subject_input_list, student_count)
-    yosa.run()
+    student_count = 2
+    for i in range(1, 40):
+        yosa = YOSA(subject_input_list, student_count, i)
+        yosa.run()
 
 
 def main():
