@@ -15,8 +15,8 @@ class Student(CPU):
         self.best_solo_subject_study_case = [] # 각 과목 공부 투자시간 순서대로
         self.best_solo_subjects_grade = [] # 각 과목 학점 순서대로
         self.best_each_team_play_time = 0 # 개인의 팀플 투자시간
-        self.best_team_play_grade = 0 # 개인
-        self.best_avg_grade = 0
+        self.best_team_play_grade = 0 # 팀플 학점
+        self.best_avg_grade = 0 # 최종적인 개인 학점(개인 공부 학점과 팀플 학점의 평균)
 
         self.total_credits = 3  # 총 학점 21 학점같은 - 기본 운영체제 팀플 3학점을 듣기 때문에
 
@@ -25,7 +25,7 @@ class Student(CPU):
         self.total_credits += subject.credit
 
     # max_solo_study_time 이걸로 best 시간 구하고 이걸로 구해도 똑같은 값이 나올거 같은데?
-    def calculate_best_case(self, best_team_play_case):
+    def calculate_best_case(self, best_team_play_case, max_team_play_time):
         best_each_team_play_time = best_team_play_case[0][self.id]
         total_team_play_time = sum(best_team_play_case[0])
         max_solo_study_time = 24 - best_each_team_play_time
@@ -33,7 +33,7 @@ class Student(CPU):
         self.best_solo_total_study_time = sum(self.best_solo_subject_study_case)
         self.best_solo_subjects_grade = self.best_solo_subjects_grades[max_solo_study_time]
         self.best_each_team_play_time = best_each_team_play_time
-        self.best_team_play_grade = best_team_play_case[2]
+        self.best_team_play_grade = self.get_team_play_grade(total_team_play_time, max_team_play_time)
         self.best_avg_grade = best_team_play_case[1][self.id]
         print("---------------------------")
         print("self.best_solo_subject_study_case", self.best_solo_subject_study_case)

@@ -85,7 +85,7 @@ class YOSA(Scheduler):
         self.team_avg_grade = best_team_play_case[2]
         print("team_avg = ", self.team_avg_grade)
         for student in self.students:
-            student.calculate_best_case(best_team_play_case)
+            student.calculate_best_case(best_team_play_case, self.max_team_play_time)
 
     def allocate_subject_to_student(self):
         # 과목 리스트를 돌면서
