@@ -67,10 +67,11 @@ def test_YOSA():
     ]
 
     student_count = 2
-    for i in range(1, 40):
-        yosa = YOSA(subject_input_list, student_count, i)
-        yosa.run()
-
+    # for i in range(1, 40):
+    #     yosa = YOSA(subject_input_list, student_count, i)
+    #     yosa.run()
+    yosa = YOSA(subject_input_list, student_count, 40)
+    yosa.run()
 
 def main():
     test(
