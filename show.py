@@ -461,6 +461,7 @@ class MyApp(QWidget):
 
             # self.history[0][2]부분이 YOSA의 student 목록을 반환할 것이라 가정하고 코드를 작성.
             # self.history[0][2]부분이 student가 아닌 경우는 이에 맞춰서 코드를 수정할 필요가 있음.
+
             for student in range(student_count):
                 # 공부시간
                 self.Result_Table.setItem(
@@ -594,9 +595,9 @@ class MyApp(QWidget):
         # AT BT 범위 바꾼거 수정
         self.AT.setRange(1, 4)
         self.ATLabel.setText("학점")
-        self.BT.setRange(1, 999)
+        self.BT.setRange(1, 24)
         self.CPULabel.setText("학생 수")
-        self.TQ.setRange(1, 999)
+        self.TQ.setRange(1, 96)
         self.TQLabel.setText("팀프 시간")
         # Proc_Table 기본 세팅
         self.Proc_Table.setColumnCount(4)

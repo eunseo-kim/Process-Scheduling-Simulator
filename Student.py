@@ -124,13 +124,19 @@ class Student(CPU):
 
     def make_student_real_subject_list(self):
         real_subject_list = []
-        for idx, subject in enumerate(self.subject_list):
-            real_subject = copy.deepcopy(subject)
-            real_subject.BT = self.best_solo_subject_study_case[idx]
-            real_subject_list.append(real_subject)
-        real_subject_list.append(
-            Subject("팀프", 3, self.best_each_team_play_time, 14, -1),
-        )
+        # 여기할때
+        # BT가 0 초과일때만 리스트에 append 하면 진짜진짜진짜끝날거같음
+        for idx, best_subject_study_time in enumerate(self.best_solo_subject_study_case):
+            # print(self.best_solo_subject_study_case)
+            if best_subject_study_time > 0:
+                real_subject = copy.deepcopy(self.subject_list[idx])
+                real_subject.BT = best_subject_study_time
+                real_subject.remain_BT = real_subject.BT 
+                real_subject_list.append(real_subject)
+        if self.best_each_team_play_time > 0:
+            real_subject_list.append(
+                Subject("팀프", 3, self.best_each_team_play_time, 14, -1),
+            )
         return real_subject_list
 
 
