@@ -5,6 +5,15 @@ from itertools import product
 from Student import *
 from Subject import *
 from numpy import std
+from SPN import *
+from RR import *
+import random
+
+# TODO import 정리
+# 전체 리팩토링
+# 투두 남은거 체크
+# 프로그램으로 만들어보기
+# 테스트 및 예외처리 하기
 
 # 24^(학생수)의 행렬을 만들고 최적값을 찾는
 # 미리 예외처리를 통해 가지치기?
@@ -18,8 +27,7 @@ from numpy import std
 # [Student] = CPU
 # best_solo_avg_grades = 미리 0으로 25개 초기화
 
-# TODO. 팀플시간 1일때 왜 전부 4.5가 안 나오는지
-# TODO. 일단 개인 과목 1과목씩 받아서 하기ㅠ
+
 class YOSA(Scheduler):
     # TODO 직접 객체 리스트를 넣어줄지, 숫자(입력값)를 넣어줄지 고민
     def __init__(self, subject_input_list, student_count, max_team_play_time):
@@ -28,10 +36,9 @@ class YOSA(Scheduler):
         self.subjects = subject_input_list
         self.max_team_play_time = max_team_play_time
         self.team_avg_grade = 0
+        self.each_student_history_list = []
         self.allocate_subject_to_student()
 
-    # TODO team_play_case로 할지 best_team_play_case로 할지
-    # TODO best_team_play_case 묶어서
     def find_best_team_play_case(self):
         for student in self.students:
             student.set_best_solo_cases()
@@ -86,6 +93,15 @@ class YOSA(Scheduler):
         print("team_avg = ", self.team_avg_grade)
         for student in self.students:
             student.calculate_best_case(best_team_play_case, self.max_team_play_time)
+            # 현재 나온 학생들을 기준으로 각각 1개짜리로 돌려서
+            # history를 모은 each_student_history_list를 만들어서 돌린다.
+            student_real_subject_list = student.make_student_real_subject_list()
+            if random.choice([True, False]):
+                scheduler = SPN(student_real_subject_list, 1)
+            else:
+                scheduler = RR(student_real_subject_list, 1, random.randrange(1, 4))
+            scheduler.run()
+            self.each_student_history_list.append(scheduler.history)
 
     def allocate_subject_to_student(self):
         # 과목 리스트를 돌면서

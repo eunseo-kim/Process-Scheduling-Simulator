@@ -1,7 +1,7 @@
 from CPU import *
 from collections import defaultdict
 from itertools import product
-
+import copy
 
 class Student(CPU):
     def __init__(self, student_name):  # student_name는 학생 이름, class_list는 학생이 듣는 수업
@@ -107,6 +107,17 @@ class Student(CPU):
                 all_study_cases[study_time].append(study_subject_time_case)
         # print("all_study_cases", all_study_cases)
         return all_study_cases
+
+
+    def make_student_real_subject_list(self):
+        real_subject_list = []
+        for idx, subject in enumerate(self.subject_list):
+            real_subject = copy.deepcopy(subject)
+            real_subject.BT = self.best_solo_subject_study_case[idx]
+            real_subject_list.append(real_subject)
+        return real_subject_list
+
+
 
     def convert_score_to_grade(self, score):
         if score >= 95:

@@ -7,6 +7,8 @@ import time
 from PyQt5.QtCore import Qt
 import copy
 
+# TODO 팀프 학점 삭제 요청 - 운영체제 팀프라고 생각해서 3학점으로 고정해놓음..ㅠ
+
 
 class MyApp(QWidget):
     def __init__(self):
@@ -18,7 +20,7 @@ class MyApp(QWidget):
         self.algo_list = ["FCFS", "RR", "SPN", "SRTN", "HRRN", "YOSA"]
         self.column_count = 3
         self.cur_algo = "FCFS"
-        self.proc_Count = [0,0,0,0]
+        self.proc_Count = [0, 0, 0, 0]
         self.initUI()
 
     # 수정 : font
@@ -94,7 +96,7 @@ class MyApp(QWidget):
         self.TQLabel = QLabel("Quantum")
 
         self.TP_Time = QSpinBox()
-        self.TP_Time.setRange(1,999)
+        self.TP_Time.setRange(1, 999)
         self.TP_Time.setDisabled(True)
 
         # Gantt Chart를 표로 보여줄 Result_Table선언
@@ -110,9 +112,9 @@ class MyApp(QWidget):
 
         # Proc_List에 프로세스 목록을 추가 및 화면 내용을 리셋하는 버튼 (이때문에 거진 뒤로 가야할듯)
         self.addButton = QPushButton("Add", self)
-        # addButton.clicked.connect(self.add)
+        self.addButton.clicked.connect(self.add)
         # 수정 : 디버깅용 test를 add 버튼에 일시적으로 연결 (test 누르면 자동으로 값 입력됨)
-        self.addButton.clicked.connect(self.test)
+        # self.addButton.clicked.connect(self.test)
 
         resetButton = QPushButton("Reset", self)
         resetButton.clicked.connect(self.reset)
@@ -137,8 +139,8 @@ class MyApp(QWidget):
         grid_Line1.addWidget(self.ProName, 1, 1)
         grid_Line1.addWidget(self.AT, 1, 2)
         grid_Line1.addWidget(self.BT, 1, 3)
-        grid_Line1.addWidget(QLabel("대상 학생"),0,4)
-        grid_Line1.addWidget(self.StudentList,1,4)
+        grid_Line1.addWidget(QLabel("대상 학생"), 0, 4)
+        grid_Line1.addWidget(self.StudentList, 1, 4)
         grid_Line1.addWidget(self.addButton, 1, 5)
         grid_Line1.addWidget(resetButton, 1, 6)
 
@@ -148,8 +150,8 @@ class MyApp(QWidget):
         grid_Line2.addWidget(self.cpu_count, 0, 1)
         grid_Line2.addWidget(self.TQLabel, 1, 0)
         grid_Line2.addWidget(self.TQ, 1, 1)
-        grid_Line2.addWidget(QLabel("팀프 시간"),2,0)
-        grid_Line2.addWidget(self.TP_Time,2,1)
+        grid_Line2.addWidget(QLabel("팀프 시간"), 2, 0)
+        grid_Line2.addWidget(self.TP_Time, 2, 1)
         grid_Line2.addWidget(self.Run_Alg, 3, 0)
 
         # 두번째 줄을 통합해줄 hbox_Line2, Proc_Table과 grid_Line2를 레이아웃에 추가함.
@@ -207,7 +209,7 @@ class MyApp(QWidget):
                 self.TQ.setEnabled(True)
             else:
                 self.TQ.setDisabled(True)
-        self.cur_algo = self.Alg_Select.currentText() 
+        self.cur_algo = self.Alg_Select.currentText()
 
     def setCPUTable_slot(self):
         NameHeader = []
@@ -241,7 +243,6 @@ class MyApp(QWidget):
         # 프로그램 좀 굴리다 깨달은건데 run 돌리고 CPU 만지고 슬라이더 돌리면 오류생길수있음
         self.history_slider.setDisabled(True)
 
-
     # 수정 : 디버깅용(자동 입력 해줌 - 프로세스 개수, AT, BT까지 자동으로 입력)
     def test(self):
         self.Run_Alg.setEnabled(True)
@@ -265,6 +266,19 @@ class MyApp(QWidget):
             Process("p9", 1, 4, 9),
         ]
         # ----------------------------
+        self.Proc_List = [
+            Subject("알고리즘", 4, 8, 0, 0),
+            Subject("웹프", 3, 7, 1, 0),
+            Subject("직능훈", 2, 4, 2, 0),
+            # Subject("알고리즘", 4, 5, 3, 1),
+            Subject("C++", 4, 4, 4, 1),
+            # Subject("웹프", 3, 3, 5, 1),
+            # Subject("알고리즘", 4, 4, 6, 2),
+            # Subject("데베설", 3, 5, 7, 2),
+            # Subject("운영체제", 2, 6, 8, 2),
+        ]
+
+        #-------------------------------
         print("[self.Proc_List]")
         print("[", end="")
         for idx, process in enumerate(self.Proc_List):
@@ -296,20 +310,24 @@ class MyApp(QWidget):
         self.Run_Alg.setEnabled(True)
         # Proc_List에 프로세스를 저장.
         if self.cur_algo != "YOSA":
-            self.Proc_List.append(Process(self.ProName.text(), self.AT.value(), self.BT.value(), random.randrange(1, 8)))
+            self.Proc_List.append(
+                Process(self.ProName.text(), self.AT.value(), self.BT.value(), random.randrange(1, 8))
+            )
         # YOSA인 경우 해당되는 CPU의 정보도 같이 넣어줌
         else:
             # select에 선택한 학생 번호를 넣어주고, 이를 Proc_List에 넣을떄 같이 넣어줌
             select = int(self.StudentList.currentText()[-1])
-            self.Proc_List.append(Subject(self.ProName.text(), self.AT.value(), self.BT.value(), random.randrange(1, 15), select - 1))
-            self.proc_Count[select -  1] += 1
+            self.Proc_List.append(
+                Subject(self.ProName.text(), self.AT.value(), self.BT.value(), random.randrange(1, 15), select - 1)
+            )
+            self.proc_Count[select - 1] += 1
             # 만약 학생 3이 해야하는 프로세스가 등록이 되었을 때, 이후 학생 수를 1이나 2로 선정하고 run을 돌리면 문제가 될 것.
             # 이를 보완하기 위해 학생 3이 해야하는 프로세스가 등록이 되면 학생수 1이랑 2를 비활성화 하함
-            while(int(self.cpu_count.itemText(0)) < select):
-                  self.cpu_count.removeItem(0)
+            while int(self.cpu_count.itemText(0)) < select:
+                self.cpu_count.removeItem(0)
             # 만약 해당 학생의 프로세스 개수가 4가 되면 StudentList의 해당 학생을 빼서 더이상 넣지 못하게 함
-            # 그리고 그런 상황에서 cpu_count 건들면 괜히 이상해질거같으니 cpu_count 비활성화 
-            if self.proc_Count[select -  1] == 4:
+            # 그리고 그런 상황에서 cpu_count 건들면 괜히 이상해질거같으니 cpu_count 비활성화
+            if self.proc_Count[select - 1] == 4:
                 find = "학생 " + str(select)
                 deleteIndex = self.StudentList.findText(find)
                 self.StudentList.removeItem(deleteIndex)
@@ -356,7 +374,7 @@ class MyApp(QWidget):
         self.cpu_count.clear()
         for cpu_idx in range(1, 5):
             self.cpu_count.addItem(str(cpu_idx))
-        self.proc_Count = [0,0,0,0]
+        self.proc_Count = [0, 0, 0, 0]
 
     # 알고리즘 실행
     def Run_Algorithm(self):
@@ -375,8 +393,8 @@ class MyApp(QWidget):
             scheduler = SRTN(PList, int(self.cpu_count.currentText()))
         elif self.Alg_Select.currentText() == "HRRN":
             scheduler = HRRN(PList, int(self.cpu_count.currentText()))
-        # elif self.Alg_Select.currentText() == "YOSA":
-        #     scheduler = YOSA(PList, int(self.cpu_count.currentText()))
+        elif self.Alg_Select.currentText() == "YOSA":
+            scheduler = YOSA(PList, int(self.cpu_count.currentText()), int(self.TP_Time.currentText()))
 
         scheduler.run()
         # 실행 이후 히스토리를 self.history에 저장
@@ -445,15 +463,27 @@ class MyApp(QWidget):
             avg_grade = 0
             for student in range(student_count):
                 # 공부시간
-                self.Result_Table.setItem(student, 0, QTableWidgetItem(self.history[0][2][student].best_solo_total_study_time))
+                self.Result_Table.setItem(
+                    student, 0, QTableWidgetItem(self.history[0][2][student].best_solo_total_study_time)
+                )
                 # 각 과목 당 공부 시간
                 for subject in range(self.history[0][2][student].best_solo_subjects_grade):
-                    self.Result_Table.setItem(student, 1 + subject * 2, QTableWidgetItem(self.history[0][2][student].best_solo_subject_study_case))
-                    self.Result_Table.setItem(student, 2 + subject * 2, QTableWidgetItem(self.history[0][2][student].best_solo_subjects_grade))
-                self.Result_Table.setItem(student, 9, QTableWidgetItem(self.history[0][2][student].best_each_team_play_time))
+                    self.Result_Table.setItem(
+                        student,
+                        1 + subject * 2,
+                        QTableWidgetItem(self.history[0][2][student].best_solo_subject_study_case),
+                    )
+                    self.Result_Table.setItem(
+                        student, 2 + subject * 2, QTableWidgetItem(self.history[0][2][student].best_solo_subjects_grade)
+                    )
+                self.Result_Table.setItem(
+                    student, 9, QTableWidgetItem(self.history[0][2][student].best_each_team_play_time)
+                )
                 self.Result_Table.setItem(student, 11, QTableWidgetItem(self.history[0][2][student].best_avg_grade))
                 # 전체 인원 평균 계산, 이후에 YOSA에서 따로 불러오는 경우가 생긴다면 빼고 그부분을 넣으면 될 것 같음.
-                avg_grade += self.history[0][2][student].best_avg_grade + self.history[0][2][student].best_team_play_grade 
+                avg_grade += (
+                    self.history[0][2][student].best_avg_grade + self.history[0][2][student].best_team_play_grade
+                )
             avg_grade /= student_count
             # 팀플 학점과 전체 평균은 병합했기에 한번만 입력하면 될 것이라 생각
             self.Result_Table.setItem(0, 10, QTableWidgetItem(self.history[0][2][0].best_team_play_grade))
@@ -565,9 +595,21 @@ class MyApp(QWidget):
         # Result_Table 기본 세팅
         self.Result_Table.setColumnCount(13)
         self.Result_Table.setHorizontalHeaderLabels(
-            ["개인 공부\n투자 시간", "과목 1\n공부 시간", "과목 1\n학점", "과목 2\n공부 시간", "과목 2\n학점", 
-             "과목 3\n공부 시간", "과목 3\n학점", "과목 4\n공부 시간", "과목 4\n학점",
-            "팀플\n투자 시간", "팀플 학점", "평균 학점", "팀 전체\n평균 학점"]
+            [
+                "개인 공부\n투자 시간",
+                "과목 1\n공부 시간",
+                "과목 1\n학점",
+                "과목 2\n공부 시간",
+                "과목 2\n학점",
+                "과목 3\n공부 시간",
+                "과목 3\n학점",
+                "과목 4\n공부 시간",
+                "과목 4\n학점",
+                "팀플\n투자 시간",
+                "팀플 학점",
+                "평균 학점",
+                "팀 전체\n평균 학점",
+            ]
         )
         self.Result_Table.horizontalHeader().setFixedHeight(45)
         # Result의 Vertical과 StudentList부분은 setCPUTAble_slot으로 넘김
@@ -579,7 +621,6 @@ class MyApp(QWidget):
         self.StudentList.setEnabled(True)
         self.TQ.setEnabled(True)
         self.TP_Time.setEnabled(True)
-
 
 
 if __name__ == "__main__":
