@@ -1,9 +1,9 @@
-from main import *
 import random
 import sys
+import copy
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-import time
+from PyQt5.QtCore import Qt
 from process import Process
 from subject import Subject
 from rr import RR
@@ -12,10 +12,6 @@ from hrrn import HRRN
 from spn import SPN
 from srtn import SRTN
 from yosa import YOSA
-from subject import Subject
-from process import Process
-from PyQt5.QtCore import Qt
-import copy
 
 
 class MyApp(QWidget):
@@ -30,7 +26,7 @@ class MyApp(QWidget):
         self.cur_algo = "FCFS"
         self.process_count = 0
         self.subject_count = [0, 0, 0, 0]
-        self.initUI()
+        self.init_ui()
 
     # 수정 : font
     def change_font(self):
@@ -42,7 +38,7 @@ class MyApp(QWidget):
         # font.setBold(True)
         self.setFont(font)
 
-    def initUI(self):
+    def init_ui(self):
         self.resize(1400, 900)
         self.center()
 
@@ -50,7 +46,7 @@ class MyApp(QWidget):
         self.alg_select = QComboBox(self)
         for algo in self.algo_list:
             self.alg_select.addItem(algo)
-        self.alg_select.activated.connect(self.enableSlot)
+        self.alg_select.activated.connect(self.enable_slot)
 
         # 프로세스 이름을 사용자에게 받을 ProName, AT를 사용자에게 받을 AT, BT를 사용자에게 받을 BT
         # AT와 BT같이 사용자에게 숫자로만 받을거라면 스핀박스로 하는게 더 편하다고 함
@@ -188,7 +184,7 @@ class MyApp(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def enableSlot(self):
+    def enable_slot(self):
         if self.alg_select.currentText() != "YOSA":
             # 이전 세팅이 YOSA 였다면
             if self.cur_algo == "YOSA":
@@ -202,7 +198,7 @@ class MyApp(QWidget):
         else:
             self.reset()
             # 화면을 YOSA용 세팅으로 변경
-            self.YOSA_setting()
+            self.yosa_setting()
         self.cur_algo = self.alg_select.currentText()
 
     def set_cpu_slot(self):
@@ -399,20 +395,20 @@ class MyApp(QWidget):
         # 아직 알고리즘 구분 안넣고 RR을 시험삼아 돌림, 그래서 Quantum설정 하려면 RR선택하고 돌려볼것
 
         # 수정 : 알고리즘 선택하는 부분
-        # 한번 설정한 프로세스 목록을 계속해서 돌릴 상황을 가정해야하기 떄문에 깊은 복사로 PList에 가져와서 실행
-        PList = copy.deepcopy(self.proc_list)
+        # 한번 설정한 프로세스 목록을 계속해서 돌릴 상황을 가정해야하기 떄문에 깊은 복사로 proc_copy_list에 가져와서 실행
+        proc_copy_list = copy.deepcopy(self.proc_list)
         if self.cur_algo == "FCFS":
-            scheduler = FCFS(PList, int(self.cpu_count.currentText()))
+            scheduler = FCFS(proc_copy_list, int(self.cpu_count.currentText()))
         elif self.cur_algo == "RR":
-            scheduler = RR(PList, int(self.cpu_count.currentText()), self.tq.value())
+            scheduler = RR(proc_copy_list, int(self.cpu_count.currentText()), self.tq.value())
         elif self.cur_algo == "SPN":
-            scheduler = SPN(PList, int(self.cpu_count.currentText()))
+            scheduler = SPN(proc_copy_list, int(self.cpu_count.currentText()))
         elif self.cur_algo == "SRTN":
-            scheduler = SRTN(PList, int(self.cpu_count.currentText()))
+            scheduler = SRTN(proc_copy_list, int(self.cpu_count.currentText()))
         elif self.cur_algo == "HRRN":
-            scheduler = HRRN(PList, int(self.cpu_count.currentText()))
+            scheduler = HRRN(proc_copy_list, int(self.cpu_count.currentText()))
         elif self.cur_algo == "YOSA":
-            scheduler = YOSA(PList, int(self.cpu_count.currentText()), self.tq.value())
+            scheduler = YOSA(proc_copy_list, int(self.cpu_count.currentText()), self.tq.value())
 
         scheduler.run()
         self.history_slider.setEnabled(True)
@@ -428,13 +424,13 @@ class MyApp(QWidget):
             self.gantt_table.setColumnCount(0)
             self.result_table.setRowCount(len(self.history[0][2]))
 
-            for Q_proc_idx, Q_process in enumerate(self.history[0][0]):
-                self.ready_table.setItem(0, Q_proc_idx, QTableWidgetItem(Q_process.id))
-                self.ready_table.item(0, Q_proc_idx).setBackground(
+            for q_proc_idx, q_process in enumerate(self.history[0][0]):
+                self.ready_table.setItem(0, q_proc_idx, QTableWidgetItem(q_process.id))
+                self.ready_table.item(0, q_proc_idx).setBackground(
                     QtGui.QColor(
-                        Q_process.color[0],
-                        Q_process.color[1],
-                        Q_process.color[2],
+                        q_process.color[0],
+                        q_process.color[1],
+                        q_process.color[2],
                     )
                 )
             # DEBUG
@@ -501,13 +497,13 @@ class MyApp(QWidget):
             cpu_count = len(self.history[0][1])
             self.ready_table.setColumnCount(len(self.history[second][0]))
             self.gantt_table.setColumnCount(second)
-            for Q_proc_idx, Q_process in enumerate(self.history[second][0]):
-                self.ready_table.setItem(0, Q_proc_idx, QTableWidgetItem(Q_process.id))
-                self.ready_table.item(0, Q_proc_idx).setBackground(
+            for q_proc_idx, q_process in enumerate(self.history[second][0]):
+                self.ready_table.setItem(0, q_proc_idx, QTableWidgetItem(q_process.id))
+                self.ready_table.item(0, q_proc_idx).setBackground(
                     QtGui.QColor(
-                        Q_process.color[0],
-                        Q_process.color[1],
-                        Q_process.color[2],
+                        q_process.color[0],
+                        q_process.color[1],
+                        q_process.color[2],
                     )
                 )
             max_len_cpu = 0
@@ -583,7 +579,7 @@ class MyApp(QWidget):
         self.real_time_label.setText("Real Time = 0 sec")
         self.student_list.setDisabled(True)
 
-    def YOSA_setting(self):
+    def yosa_setting(self):
         # AT BT 범위 바꾼거 수정
         self.at.setRange(1, 4)
         self.at_label.setText("학점")
