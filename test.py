@@ -1,10 +1,11 @@
-from RR import *
-from FCFS import *
-from HRRN import *
-from SPN import *
-from SRTN import *
-from YOSA import *
-from Subject import *
+from rr import RR
+from fcfs import FCFS
+from hrrn import HRRN
+from spn import SPN
+from srtn import SRTN
+from yosa import YOSA
+from subject import Subject
+from process import Process
 
 
 def print_history(history):
@@ -13,10 +14,10 @@ def print_history(history):
         print("[{0}]".format(cur_time))
         print("ready_queue : ", end="")
         for ready_queue_process in record[0]:
-            print(ready_queue_process.process_id, end=" ")
+            print(ready_queue_process.id, end=" ")
         print()
         for idx, cpu_process in enumerate(record[1]):
-            print("cpu {0}: {1}".format(idx + 1, cpu_process.process_id if cpu_process else None))
+            print("cpu {0}: {1}".format(idx + 1, cpu_process.id if cpu_process else None))
 
 
 def print_process_time_table(processes):
@@ -26,10 +27,10 @@ def print_process_time_table(processes):
     for process in processes:
         print(
             "{0}\t{1}\t{2}\t{3}\t{4}\t{5}".format(
-                process.process_id, process.AT, process.BT, process.WT, process.TT, round(process.NTT, 1)
+                process.id, process.at, process.bt, process.wt, process.tt, round(process.ntt, 1)
             )
         )
-        average_response_time += process.TT
+        average_response_time += process.tt
     average_response_time /= len(processes)
     print("\nAverage response time(TT) : ", round(average_response_time, 2))
     print("----------------------------------------------------\n")
@@ -54,12 +55,24 @@ def test(process_input_list, cpu_count):
 
 
 def test_YOSA():
+    # subject_input_list = [
+    #     Subject("알고리즘", 4, 1, 0, 0),
+    #     # Subject("웹프", 3, 7, 1, 0),
+    #     # Subject("직능훈", 2, 4, 2, 0),
+    #     # Subject("알고리즘", 4, 5, 3, 1),
+    #     Subject("C++", 4, 24, 4, 1),
+    #     # Subject("웹프", 3, 3, 5, 1),
+    #     # Subject("알고리즘", 4, 4, 6, 2),
+    #     # Subject("데베설", 3, 5, 7, 2),
+    #     # Subject("운영체제", 2, 6, 8, 2),
+    # ]
+
     subject_input_list = [
-        Subject("알고리즘", 4, 8, 0, 0),
-        Subject("웹프", 3, 7, 1, 0),
-        Subject("직능훈", 2, 4, 2, 0),
+        Subject("알고리즘", 1, 1, 0, 0),
+        # Subject("웹프", 3, 7, 1, 0),
+        # Subject("직능훈", 2, 4, 2, 0),
         # Subject("알고리즘", 4, 5, 3, 1),
-        Subject("C++", 4, 4, 4, 1),
+        Subject("C++", 1, 23, 4, 1),
         # Subject("웹프", 3, 3, 5, 1),
         # Subject("알고리즘", 4, 4, 6, 2),
         # Subject("데베설", 3, 5, 7, 2),
@@ -72,6 +85,9 @@ def test_YOSA():
     #     yosa.run()
     yosa = YOSA(subject_input_list, student_count, 40)
     yosa.run()
+    yosa = YOSA(subject_input_list, student_count, 35)
+    yosa.run()
+
 
 def main():
     test(

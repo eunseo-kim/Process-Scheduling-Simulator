@@ -1,15 +1,12 @@
-import random
-
-
 class Process:
-    def __init__(self, process_id, AT, BT, color_idx):
-        self.process_id = process_id
-        self.AT = AT  # arrival time
-        self.BT = BT  # burst time
-        self.remain_BT = BT  # remain burst time
-        self.WT = 0  # waiting time(TT - BT)
-        self.TT = 0  # turnaround time
-        self.NTT = 0  # normalized turnaround time(TT/BT)
+    def __init__(self, id, at, bt, color_idx):
+        self.id = id
+        self.at = at  # arrival time
+        self.bt = bt  # burst time
+        self.remain_bt = bt  # remain burst time
+        self.wt = 0  # waiting time(tt - bt)
+        self.tt = 0  # turnaround time
+        self.ntt = 0  # normalized turnaround time(tt/bt)
 
         # 수정 : color_palette 추가
         self.color_palette = [
@@ -29,11 +26,10 @@ class Process:
             [207, 208, 254],
             [236, 213, 227],
         ]
-        # self.Color = random.choice(self.color_palette)
-        self.Color = self.color_palette[color_idx]
+        self.color = self.color_palette[color_idx]
 
     def calculate_finished_process(self, cur_time) -> int:
-        self.TT = cur_time - self.AT
-        if self.BT != 0:
-            self.WT = self.TT - self.BT
-            self.NTT = self.TT / self.BT
+        self.tt = cur_time - self.at
+        if self.bt > 0:
+            self.wt = self.tt - self.bt
+            self.ntt = self.tt / self.bt

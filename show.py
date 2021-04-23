@@ -1,9 +1,18 @@
-from Main import *
 import random
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 import time
+from process import Process
+from subject import Subject
+from rr import RR
+from fcfs import FCFS
+from hrrn import HRRN
+from spn import SPN
+from srtn import SRTN
+from yosa import YOSA
+from subject import Subject
+from process import Process
 from PyQt5.QtCore import Qt
 import copy
 
@@ -43,16 +52,16 @@ class MyApp(QWidget):
 
         # 프로세스 이름을 사용자에게 받을 ProName, AT를 사용자에게 받을 AT, BT를 사용자에게 받을 BT
         # AT와 BT같이 사용자에게 숫자로만 받을거라면 스핀박스로 하는게 더 편하다고 함
-        self.process_name = QLineEdit()
-        self.process_name.setMaxLength(10)
-        self.AT_label = QLabel("AT")
-        self.AT = QSpinBox()
-        self.AT.setRange(0, 65535)
-        self.BT = QSpinBox()
-        self.BT.setRange(1, 65535)
-        self.student_list = QComboBox(self)
-        self.student_list.addItem("학생 1")
-        self.student_list.setDisabled(True)
+        self.ProName = QLineEdit()
+        self.ProName.setMaxLength(10)
+        self.atLabel = QLabel("AT")
+        self.at = QSpinBox()
+        self.at.setRange(0, 65535)
+        self.bt = QSpinBox()
+        self.bt.setRange(1, 65535)
+        self.StudentList = QComboBox(self)
+        self.StudentList.addItem("학생 1")
+        self.StudentList.setDisabled(True)
         # 프로세스 목록을 표로 보여줄 Proc_Table선언
         self.proc_table = QTableWidget(self)
         self.proc_table.setColumnCount(3)
@@ -92,8 +101,6 @@ class MyApp(QWidget):
         self.TQ.setDisabled(True)
         self.TQ_label = QLabel("Quantum")
 
-
-
         # Gantt Chart를 표로 보여줄 Result_Table선언
         self.result_table = QTableWidget(self)
         self.result_table.setColumnCount(6)
@@ -113,7 +120,7 @@ class MyApp(QWidget):
 
         reset_button = QPushButton("Reset", self)
         reset_button.clicked.connect(self.reset)
-        
+
         # 알고리즘 실행 버튼
         self.run_alg = QPushButton("Run", self)
         self.run_alg.clicked.connect(self.run_algorithm)
@@ -127,12 +134,12 @@ class MyApp(QWidget):
         grid_Line1 = QGridLayout()
         grid_Line1.addWidget(QLabel("Algorithm"), 0, 0)
         grid_Line1.addWidget(QLabel("Process Name"), 0, 1)
-        grid_Line1.addWidget(self.AT_label, 0, 2)
+        grid_Line1.addWidget(self.atLabel, 0, 2)
         grid_Line1.addWidget(QLabel("BT"), 0, 3)
-        grid_Line1.addWidget(self.alg_select, 1, 0)
-        grid_Line1.addWidget(self.process_name, 1, 1)
-        grid_Line1.addWidget(self.AT, 1, 2)
-        grid_Line1.addWidget(self.BT, 1, 3)
+        grid_Line1.addWidget(self.Alg_Select, 1, 0)
+        grid_Line1.addWidget(self.ProName, 1, 1)
+        grid_Line1.addWidget(self.at, 1, 2)
+        grid_Line1.addWidget(self.bt, 1, 3)
         grid_Line1.addWidget(QLabel("대상 학생"), 0, 4)
         grid_Line1.addWidget(self.student_list, 1, 4)
         grid_Line1.addWidget(self.add_button, 1, 5)
@@ -239,10 +246,8 @@ class MyApp(QWidget):
     def test(self):
         self.run_alg.setEnabled(True)
         # Proc_List에 프로세스를 저장.======================
-        for process_id in range(random.randrange(1, 16)):
-            self.proc_list.append(
-                Process("p" + str(process_id), random.randrange(0, 10), random.randrange(1, 8), process_id)
-            )
+        for id in range(random.randrange(1, 16)):
+            self.Proc_List.append(Process("p" + str(id), random.randrange(0, 10), random.randrange(1, 8), id))
         # ===============================================
         # 테스트 값 내가 넣어줄때-----------
         self.proc_list = [
@@ -258,23 +263,24 @@ class MyApp(QWidget):
             Process("p9", 1, 4, 9),
         ]
         # ----------------------------
-        self.proc_list = [
-            Subject("알고리즘", 4, 8, 0, 0),
-            Subject("웹프", 3, 7, 1, 0),
-            Subject("직능훈", 2, 4, 2, 0),
-            # Subject("알고리즘", 4, 5, 3, 1),
-            Subject("C++", 4, 4, 4, 1),
-            # Subject("웹프", 3, 3, 5, 1),
-            # Subject("알고리즘", 4, 4, 6, 2),
-            # Subject("데베설", 3, 5, 7, 2),
-            # Subject("운영체제", 2, 6, 8, 2),
-        ]
+        if self.Alg_Select.currentText() == "YOSA":
+            self.Proc_List = [
+                Subject("알고리즘", 1, 1, 0, 0),
+                # Subject("웹프", 3, 7, 1, 0),
+                # Subject("직능훈", 2, 4, 2, 0),
+                # Subject("알고리즘", 4, 5, 3, 1),
+                Subject("C++", 1, 23, 4, 1),
+                # Subject("웹프", 3, 3, 5, 1),
+                # Subject("알고리즘", 4, 4, 6, 2),
+                # Subject("데베설", 3, 5, 7, 2),
+                # Subject("운영체제", 2, 6, 8, 2),
+            ]
 
-        #-------------------------------
-        print("[self.proc_list]")
+        # -------------------------------
+        print("[self.Proc_List]")
         print("[", end="")
-        for idx, process in enumerate(self.proc_list):
-            print("Process('{0}', {1}, {2}, {3}),".format(process.process_id, process.AT, process.BT, idx), end="")
+        for idx, process in enumerate(self.Proc_List):
+            print("Process('{0}', {1}, {2}, {3}),".format(process.id, process.at, process.bt, idx), end="")
         print("]")
         # 기본
         # self.proc_list.append(Process("p1", 0, 3))
@@ -283,28 +289,31 @@ class MyApp(QWidget):
         # self.proc_list.append(Process("p4", 5, 5))
         # self.proc_list.append(Process("p5", 6, 3))
         # 이후 Proc_Table에 프로세스를 띄우도록 함, 열크기 = Proc_List 크기
-        self.proc_table.setRowCount(len(self.proc_list))
-        for i in range(len(self.proc_list)):
-            self.proc_table.setItem(i, 0, QTableWidgetItem(self.proc_list[i].process_id))
-            self.proc_table.item(i, 0).setBackground(
-                QtGui.QColor(self.proc_list[i].Color[0], self.proc_list[i].Color[1], self.proc_list[i].Color[2])
+        self.Proc_Table.setRowCount(len(self.Proc_List))
+        for i in range(len(self.Proc_List)):
+            self.Proc_Table.setItem(i, 0, QTableWidgetItem(self.Proc_List[i].id))
+            self.Proc_Table.item(i, 0).setBackground(
+                QtGui.QColor(self.Proc_List[i].color[0], self.Proc_List[i].color[1], self.Proc_List[i].color[2])
             )
-            # if self.proc_list[i].Color[0] + self.proc_list[i].Color[1] + self.proc_list[i].Color[2] < 350:
-            #     self.proc_table.item(i, 0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
-            self.proc_table.setItem(i, 1, QTableWidgetItem(str(self.proc_list[i].AT)))
-            self.proc_table.setItem(i, 2, QTableWidgetItem(str(self.proc_list[i].BT)))
+            # if self.Proc_List[i].color[0] + self.Proc_List[i].color[1] + self.Proc_List[i].color[2] < 350:
+            #     self.Proc_Table.item(i, 0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
+            if self.cur_algo == "YOSA":
+                self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].credit)))
+            else:
+                self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].at)))
+
+            self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i].bt)))
         # 초기화 부분
-        self.process_name.clear()
-        self.AT.setValue(0)
-        self.BT.setValue(0)
+        self.ProName.clear()
+        self.at.setValue(0)
+        self.bt.setValue(0)
 
     def add(self):
         self.run_alg.setEnabled(True)
         # Proc_List에 프로세스를 저장.
         if self.cur_algo != "YOSA":
-            # 색상을 현재 프로세스 개수를 기준으로 매겨주고, 만약 프로세스가 15개가 넘어가면 추가를 막음.
-            self.proc_list.append(
-                Process(self.process_name.text(), self.AT.value(), self.BT.value(), self.process_count)
+            self.Proc_List.append(
+                Process(self.ProName.text(), self.at.value(), self.bt.value(), random.randrange(1, 8))
             )
             self.process_count += 1
             if self.process_count == 15:
@@ -312,9 +321,9 @@ class MyApp(QWidget):
         # YOSA인 경우 해당되는 CPU의 정보도 같이 넣어줌
         else:
             # select에 선택한 학생 번호를 넣어주고, 이를 Proc_List에 넣을떄 같이 넣어줌
-            select = int(self.student_list.currentText()[-1])
-            self.proc_list.append(
-                Subject(self.process_name.text(), self.AT.value(), self.BT.value(), random.randrange(1, 15), select - 1)
+            select = int(self.StudentList.currentText()[-1])
+            self.Proc_List.append(
+                Subject(self.ProName.text(), self.at.value(), self.bt.value(), random.randrange(1, 15), select - 1)
             )
             self.subject_count[select - 1] += 1
             # 만약 학생 3이 해야하는 프로세스가 등록이 되었을 때, 이후 학생 수를 1이나 2로 선정하고 run을 돌리면 문제가 될 것.
@@ -332,25 +341,21 @@ class MyApp(QWidget):
             if self.student_list.count() == 0:
                 self.add_button.setDisabled(True)
         # 이후 Proc_Table에 프로세스를 띄우도록 함, 열크기 = Proc_List 크기
-        self.proc_table.setRowCount(len(self.proc_list))
-        for proc_idx, process in enumerate(self.proc_list):
-            self.proc_table.setItem(proc_idx, 0, QTableWidgetItem(process.process_id))
-            self.proc_table.item(proc_idx, 0).setBackground(
-                QtGui.QColor(process.Color[0], process.Color[1], process.Color[2])
+        self.Proc_Table.setRowCount(len(self.Proc_List))
+        for i in range(len(self.Proc_List)):
+            self.Proc_Table.setItem(i, 0, QTableWidgetItem(self.Proc_List[i].id))
+            self.Proc_Table.item(i, 0).setBackground(
+                QtGui.QColor(self.Proc_List[i].color[0], self.Proc_List[i].color[1], self.Proc_List[i].color[2])
             )
-            self.proc_table.setItem(proc_idx, 2, QTableWidgetItem(str(process.BT)))
-            if self.cur_algo != "YOSA":
-                # YOSA가 아닌경우엔 AT를 
-                self.proc_table.setItem(proc_idx, 1, QTableWidgetItem(str(process.AT)))
-            else:
-                # YOSA인 경우엔 student_id값과 학점을 넣어줌, 위에서 YOSA 구분때 넣을까 했는데 그러면 코드 줄 늘어나서 안했음
-                self.proc_table.setItem(proc_idx, 1, QTableWidgetItem(str(process.credit)))
-                self.proc_table.setItem(proc_idx, 3, QTableWidgetItem("학생 " + str(process.student_id + 1)))
-
+            self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].credit)))
+            self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i].bt)))
+            if self.cur_algo == "YOSA":
+                # YOSA인 경우엔 student_id값도 넣어줌
+                self.Proc_Table.setItem(i, 3, QTableWidgetItem("학생 " + str(self.Proc_List[i].student_id + 1)))
         # 초기화 부분
-        self.process_name.clear()
-        self.AT.setValue(0)
-        self.BT.setValue(1)
+        self.ProName.clear()
+        self.at.setValue(0)
+        self.bt.setValue(1)
 
     def reset(self):
         # Proc_Table과 Result_Table 열을 0으로 만들고 Proc_List를 clear
@@ -406,16 +411,16 @@ class MyApp(QWidget):
         # 처음에는 간트 차트 출력 X
         # for cpu in range(cpu_count):
         #     if self.history[1][1][cpu]:
-        #         print("CHECK:", self.history[1][1][cpu].process_id)
-        #         self.gantt_table.setItem(cpu, 0, QTableWidgetItem(self.history[1][1][cpu].process_id))
-        #         self.gantt_table.item(cpu, 0).setBackground(
+        #         print("CHECK:", self.history[1][1][cpu].id)
+        #         self.Gantt_Table.setItem(cpu, 0, QTableWidgetItem(self.history[1][1][cpu].id))
+        #         self.Gantt_Table.item(cpu, 0).setBackground(
         #             QtGui.QColor(
-        #                 self.history[1][1][cpu].Color[0],
-        #                 self.history[1][1][cpu].Color[1],
-        #                 self.history[1][1][cpu].Color[2],
+        #                 self.history[1][1][cpu].color[0],
+        #                 self.history[1][1][cpu].color[1],
+        #                 self.history[1][1][cpu].color[2],
         #             )
         #         )
-        # print("gantt:", self.history[0][1][cpu].process_id)
+        # print("gantt:", self.history[0][1][cpu].id)
         if self.cur_algo != "YOSA":
             self.history = scheduler.history
             # len(self.history) = 경과 시간, 경과 시간을 탐색할 수 있게 슬라이더를 활성화하고 슬라이더의 범위 지정, 초기는 0초
@@ -425,34 +430,38 @@ class MyApp(QWidget):
             self.gantt_table.setColumnCount(0)
             self.result_table.setRowCount(len(self.history[0][2]))
 
-            for Q_proc_idx, Q_process in enumerate(self.history[0][0]):
-                self.ready_table.setItem(
-                    0, Q_proc_idx, QTableWidgetItem(Q_process.process_id)
+            ready_queue_count = len(self.history[0][0])
+            cpu_count = len(self.history[0][1])
+            process_count = len(self.history[0][2])
+            # 마지막에 어케받을지 몰라서 일단..
+            for queue_process_idx in range(ready_queue_count):
+                self.Ready_Table.setItem(
+                    0, queue_process_idx, QTableWidgetItem(self.history[0][0][queue_process_idx].id)
                 )
                 self.ready_table.item(0, Q_proc_idx).setBackground(
                     QtGui.QColor(
-                        Q_process.Color[0],
-                        Q_process.Color[1],
-                        Q_process.Color[2],
+                        self.history[0][0][queue_process_idx].color[0],
+                        self.history[0][0][queue_process_idx].color[1],
+                        self.history[0][0][queue_process_idx].color[2],
                     )
                 )
             # DEBUG
-            # print("queue:", self.history[0][0][queue_process_idx].process_id)
-            for proc_idx, process in enumerate(self.history[0][2]):
-                self.result_table.setItem(proc_idx, 0, QTableWidgetItem(process.process_id))
-                self.result_table.setItem(proc_idx, 1, QTableWidgetItem(str(process.AT)))
-                self.result_table.setItem(proc_idx, 2, QTableWidgetItem(str(process.BT)))
-                self.result_table.setItem(proc_idx, 3, QTableWidgetItem(str(process.WT)))
-                self.result_table.setItem(proc_idx, 4, QTableWidgetItem(str(process.TT)))
-                self.result_table.setItem(proc_idx, 5, QTableWidgetItem(str(process.NTT)))
-                self.result_table.item(proc_idx, 0).setBackground(
+            # print("queue:", self.history[0][0][queue_process_idx].id)
+            for process in range(process_count):
+                self.Result_Table.setItem(process, 0, QTableWidgetItem(self.history[0][2][process].id))
+                self.Result_Table.setItem(process, 1, QTableWidgetItem(str(self.history[0][2][process].at)))
+                self.Result_Table.setItem(process, 2, QTableWidgetItem(str(self.history[0][2][process].bt)))
+                self.Result_Table.setItem(process, 3, QTableWidgetItem(str(self.history[0][2][process].wt)))
+                self.Result_Table.setItem(process, 4, QTableWidgetItem(str(self.history[0][2][process].tt)))
+                self.Result_Table.setItem(process, 5, QTableWidgetItem(str(self.history[0][2][process].ntt)))
+                self.Result_Table.item(process, 0).setBackground(
                     QtGui.QColor(
-                        process.Color[0],
-                        process.Color[1],
-                        process.Color[2],
+                        self.history[0][2][process].color[0],
+                        self.history[0][2][process].color[1],
+                        self.history[0][2][process].color[2],
                     )
                 )
-            
+                # print("result:", self.history[0][2][process].id)
         else:
             self.history = scheduler.each_student_history_list
             self.history_slider.setRange(0, 24)
@@ -473,13 +482,18 @@ class MyApp(QWidget):
                         1 + subject * 2,
                         QTableWidgetItem(str(student.best_solo_subject_study_case[subject])),
                     )
-                    self.result_table.setItem(
-                        student_idx, 2 + subject * 2, QTableWidgetItem(str(student.best_solo_subjects_grade[subject]))
+                    self.Result_Table.setItem(
+                        student,
+                        2 + subject * 2,
+                        QTableWidgetItem(str(scheduler.students[student].best_solo_subjects_grade[subject])),
                     )
                 self.result_table.setItem(
                     student_idx, 9, QTableWidgetItem(str(student.best_each_team_play_time))
                 )
-                self.result_table.setItem(student_idx, 11, QTableWidgetItem(str(student.best_avg_grade)))
+                self.Result_Table.setItem(
+                    student, 11, QTableWidgetItem(str(scheduler.students[student].best_avg_grade))
+                )
+                # 전체 인원 평균 계산, 이후에 YOSA에서 따로 불러오는 경우가 생긴다면 빼고 그부분을 넣으면 될 것 같음.
 
             # 팀플 학점과 전체 평균은 병합했기에 한번만 입력하면 될 것이라 생각
             self.result_table.setItem(0, 10, QTableWidgetItem(str(scheduler.students[0].best_team_play_grade)))
@@ -492,33 +506,37 @@ class MyApp(QWidget):
         # 표의 너비 지정
         if self.cur_algo != "YOSA":
             cpu_count = len(self.history[0][1])
-            self.ready_table.setColumnCount(len(self.history[second][0]))
-            self.gantt_table.setColumnCount(second)
-            for Q_proc_idx, Q_process in enumerate(self.history[second][0]):
-                self.ready_table.setItem(
-                    0, Q_proc_idx, QTableWidgetItem(Q_process.process_id)
+            process_count = len(self.history[0][2])
+            self.Ready_Table.setColumnCount(len(self.history[second][0]))
+            self.Gantt_Table.setColumnCount(second)
+            # 레디 큐에 저장된 프로세스를 Ready_Table에 넣는 과정
+            for queue_process_idx in range(ready_queue_count):
+                self.Ready_Table.setItem(
+                    0, queue_process_idx, QTableWidgetItem(self.history[second][0][queue_process_idx].id)
                 )
                 self.ready_table.item(0, Q_proc_idx).setBackground(
                     QtGui.QColor(
-                        Q_process.Color[0],
-                        Q_process.Color[1],
-                        Q_process.Color[2],
+                        self.history[second][0][queue_process_idx].color[0],
+                        self.history[second][0][queue_process_idx].color[1],
+                        self.history[second][0][queue_process_idx].color[2],
                     )
                 )
+                # print("queue:", self.history[second][0][queue_process_idx].id)
+
+                # ==================================================================
+                # history CPU를 매초마다 탐색해서 CPU내에 들어간 프로세스를 넣는 과정
             max_len_cpu = 0
             for seconds in range(second):
                 for cpu in range(cpu_count):
-                # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
+                    # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
                     if self.history[seconds + 1][1][cpu]:
                         max_len_cpu = cpu
-                        self.gantt_table.setItem(
-                            cpu, seconds, QTableWidgetItem(self.history[seconds + 1][1][cpu].process_id)
-                        )
-                        self.gantt_table.item(cpu, seconds).setBackground(
+                        self.Gantt_Table.setItem(cpu, seconds, QTableWidgetItem(self.history[seconds + 1][1][cpu].id))
+                        self.Gantt_Table.item(cpu, seconds).setBackground(
                             QtGui.QColor(
-                                self.history[seconds + 1][1][cpu].Color[0],
-                                self.history[seconds + 1][1][cpu].Color[1],
-                                self.history[seconds + 1][1][cpu].Color[2],
+                                self.history[seconds + 1][1][cpu].color[0],
+                                self.history[seconds + 1][1][cpu].color[1],
+                                self.history[seconds + 1][1][cpu].color[2],
                             )
                         )
 
@@ -532,32 +550,30 @@ class MyApp(QWidget):
             self.gantt_table.setColumnCount(second)
             for seconds in range(second):
                 for student in range(student_count):
-                # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
-                # 강제로 24시간을 잡기 떄문에 SPN / RR을 돌리고 반환하는 시간이 24시간보다 적을 가능성이 존재
+                    # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
                     if seconds + 1 < len(self.history[student]):
                         if self.history[student][seconds + 1][1][0]:
                             max_len_student = student
-                            self.gantt_table.setItem(
-                                student, seconds, QTableWidgetItem(self.history[student][seconds + 1][1][0].process_id)
+                            self.Gantt_Table.setItem(
+                                student, seconds, QTableWidgetItem(self.history[student][seconds + 1][1][0].id)
                             )
                             self.gantt_table.item(student, seconds).setBackground(
                                 QtGui.QColor(
-                                self.history[student][seconds + 1][1][0].Color[0],
-                                self.history[student][seconds + 1][1][0].Color[1],
-                                self.history[student][seconds + 1][1][0].Color[2],
+                                    self.history[student][seconds + 1][1][0].color[0],
+                                    self.history[student][seconds + 1][1][0].color[1],
+                                    self.history[student][seconds + 1][1][0].color[2],
+                                )
                             )
-                        )
-            self.gantt_table.scrollToItem(self.gantt_table.item(max_len_student, second - 1))
+            self.Gantt_Table.scrollToItem(self.Gantt_Table.item(max_len_student, second - 1))
             fortext = "Real Time = " + str(second) + " hour"
             self.real_time_label.setText(fortext)
 
-
-    def default_setting(self):
+    def defaultSetting(self):
         # AT BT 범위 바꾼거 수정
-        self.AT.setRange(0, 65535)
-        self.AT_label.setText("AT")
-        self.BT.setRange(1, 65535)
-        self.CPU_label.setText("CPU")
+        self.at.setRange(0, 65535)
+        self.atLabel.setText("AT")
+        self.bt.setRange(1, 65535)
+        self.CPULabel.setText("CPU")
         self.TQ.setRange(1, 65535)
         self.TQ_label.setText("Quantum")
         # Proc_Table 기본 세팅
@@ -583,16 +599,16 @@ class MyApp(QWidget):
 
     def YOSA_setting(self):
         # AT BT 범위 바꾼거 수정
-        self.AT.setRange(1, 4)
-        self.AT_label.setText("학점")
-        self.BT.setRange(1, 24)
-        self.CPU_label.setText("학생 수")
+        self.at.setRange(1, 4)
+        self.atLabel.setText("학점")
+        self.bt.setRange(1, 24)
+        self.CPULabel.setText("학생 수")
         self.TQ.setRange(1, 96)
         self.TQ_label.setText("팀프 시간")
         # Proc_Table 기본 세팅
-        self.proc_table.setColumnCount(4)
-        self.proc_table.setHorizontalHeaderLabels(["과목 이름", "학점", "소요 시간", "대상 인원"])
-        header = self.proc_table.horizontalHeader()
+        self.Proc_Table.setColumnCount(4)
+        self.Proc_Table.setHorizontalHeaderLabels(["과목 이름", "학점", "소요 시간", "수강 학생"])
+        header = self.Proc_Table.horizontalHeader()
         for column_idx in range(4):
             header.setSectionResizeMode(column_idx, QHeaderView.Stretch)
         # Gantt Table 기본 세팅
@@ -626,6 +642,7 @@ class MyApp(QWidget):
 
         self.student_list.setEnabled(True)
         self.TQ.setEnabled(True)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

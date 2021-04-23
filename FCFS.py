@@ -1,22 +1,22 @@
-from Scheduler import *
+from scheduler import Scheduler
 
 
 class FCFS(Scheduler):
     def run(self):
         cur_time = 0
         finish_processes_count = 0
-        AT_idx = 0
-        sorted_processes = sorted(self.processes, key=lambda x: x.AT)
+        at_idx = 0
+        sorted_processes = sorted(self.processes, key=lambda x: x.at)
         # 끝난 프로세스가 총 프로세스의 수와 같아질때까지 작동
         while finish_processes_count < self.process_count:
             # 현재 시간에 도착할 프로세스 대기열 큐에 넣어주기
-            for process_idx in range(AT_idx, self.process_count):
+            for process_idx in range(at_idx, self.process_count):
                 process = sorted_processes[process_idx]
-                if process.AT == cur_time:
-                    print("process arrived - cur_time:", cur_time, " p_id :", process.process_id)
+                if process.at == cur_time:
+                    print("process arrived - cur_time:", cur_time, " p_id :", process.id)
                     self.ready_queue.append(process)
-                elif process.AT > cur_time:
-                    AT_idx = process_idx
+                elif process.at > cur_time:
+                    at_idx = process_idx
                     break
 
             # history 기록하기
@@ -28,7 +28,7 @@ class FCFS(Scheduler):
                 if cpu.is_finished():
                     # 프로세스가 완전히 끝나면 현재시간을 기준으로 각 time을 계산
                     # 끝난 프로세스의 개수 1 증가
-                    print("process finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
+                    print("process finished - cur_time:", cur_time, " p_id :", cpu.process.id)
                     cpu.process.calculate_finished_process(cur_time)
                     finish_processes_count += 1
                     # 일이 끝난 CPU는 쉬게 해준다.
