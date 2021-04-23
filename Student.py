@@ -1,7 +1,7 @@
 from CPU import *
 from collections import defaultdict
 from itertools import product
-import copy
+from Subject import * 
 
 class Student(CPU):
     def __init__(self, student_name):  # student_name는 학생 이름, class_list는 학생이 듣는 수업
@@ -54,49 +54,62 @@ class Student(CPU):
         return (team_play_grade + solo_study_grade) / self.total_credits
 
     def set_best_solo_cases(self):
+        # 알고 7
+        # 0-8
+        # 배정이 아예 없으면
+        # all study case < 0
+        # 알고 7, 컴구조 4
+        # 0 : 0, 0
+        # 10 : (7, 3), (6,4)
+        # 11 : 7, 4
+        # 0 : 0,0
+        # 
         all_study_cases = self.get_all_study_cases(self.subject_list)
-        for study_time in range(25):
-            # 모든 과목 공부시간(BT)을 다 합쳐도 시간이 남아서 현재 study_time에 대한 경우가 없을 때
-            if study_time not in all_study_cases:
-                # print("all_study_cases =", study_time)
-                self.best_solo_avg_grades[study_time] = 4.5
-                self.best_solo_subject_study_cases[study_time] = [subject.BT for subject in self.subject_list]
-                self.best_solo_subjects_grades[study_time] = [4.5 for subject in self.subject_list]
-                continue
+        # TODO. if len(all_study_cases) > 0: len(defaultdict) =>
+        if len(all_study_cases) > 1:
+            for study_time in range(25):
+                # 모든 과목 공부시간(BT)을 다 합쳐도 시간이 남아서 현재 study_time에 대한 경우가 없을 때
 
-            for study_case in all_study_cases[study_time]:
-                # print("study_case", study_case)
-                grade_list = []  # 받은 학점들의 합
-                total_grade_sum = 0
-                for subject_idx, subject_study_hour in enumerate(study_case):
-                    score = subject_study_hour * self.subject_list[subject_idx].score_per_hour
-                    grade = self.convert_score_to_grade(score)
-                    grade_list.append(grade)
-                    total_grade_sum += grade * self.subject_list[subject_idx].credit
-                avg_grade = total_grade_sum / (self.total_credits - 3)
-                if self.best_solo_avg_grades[study_time] <= avg_grade:
-                    if self.best_solo_avg_grades[study_time] < avg_grade:
-                        self.best_solo_avg_grades[study_time] = avg_grade
-                        self.best_solo_subject_study_cases[study_time] = study_case[:]
-                        # print()
-                        self.best_solo_subjects_grades[study_time] = grade_list[:]
-                        # print("study_case", study_case)
-                        # print("grade_list", grade_list)
-                    # self.best_solo_subject_study_cases[study_time].append(study_case[:])
-                    # self.best_solo_subjects_grades[study_time].append(grade_list[:])
+                if study_time not in all_study_cases:
+                    # print("all_study_cases =", study_time)
+                    self.best_solo_avg_grades[study_time] = 4.5
+                    self.best_solo_subject_study_cases[study_time] = [subject.BT for subject in self.subject_list]
+                    self.best_solo_subjects_grades[study_time] = [4.5 for subject in self.subject_list]
+                    continue
+                for study_case in all_study_cases[study_time]:
+                    # print("study_case", study_case)
+                    grade_list = []  # 받은 학점들의 합
+                    total_grade_sum = 0
+                    for subject_idx, subject_study_hour in enumerate(study_case):
+                        score = subject_study_hour * self.subject_list[subject_idx].score_per_hour
+                        grade = self.convert_score_to_grade(score)
+                        grade_list.append(grade)
+                        total_grade_sum += grade * self.subject_list[subject_idx].credit
+                    #avg_grade
+                    avg_grade = total_grade_sum / (self.total_credits - 3)
+                    if self.best_solo_avg_grades[study_time] <= avg_grade:
+                        if self.best_solo_avg_grades[study_time] < avg_grade:
+                            self.best_solo_avg_grades[study_time] = avg_grade
+                            self.best_solo_subject_study_cases[study_time] = study_case[:]
+                            # print()
+                            self.best_solo_subjects_grades[study_time] = grade_list[:]
+                            # print("study_case", study_case)
+                            # print("grade_list", grade_list)
+                        # self.best_solo_subject_study_cases[study_time].append(study_case[:])
+                        # self.best_solo_subjects_grades[study_time].append(grade_list[:])
 
-                    # print("self.best_solo_subject_study_cases[", study_time, "]", self.best_solo_subject_study_cases[study_time])
+                        # print("self.best_solo_subject_study_cases[", study_time, "]", self.best_solo_subject_study_cases[study_time])
 
-        # test
-        # for study_time, best_solo_grade in enumerate(best_solo_avg_grades):
-        #     print("best_solo_avg_grades", study_time, best_solo_grade)
-        # print("best_solo_subjects_grades", study_time, self.best_solo_subjects_grades)
-        # print("best_solo_subjects_grades", study_time, self.best_solo_subjects_grades)
-        # for study_time in range(25):
-        #     print("======================")
-        #     print("best_solo_avg_grades", study_time, self.best_solo_avg_grades[study_time])
-        #     print("best_solo_subject_study_case", study_time, self.best_solo_subject_study_cases[study_time])
-        #     print("best_solo_subjects_grade", study_time, self.best_solo_subjects_grades[study_time])
+            # test
+            # for study_time, best_solo_grade in enumerate(best_solo_avg_grades):
+            #     print("best_solo_avg_grades", study_time, best_solo_grade)
+            # print("best_solo_subjects_grades", study_time, self.best_solo_subjects_grades)
+            # print("best_solo_subjects_grades", study_time, self.best_solo_subjects_grades)
+            # for study_time in range(25):
+            #     print("======================")
+            #     print("best_solo_avg_grades", study_time, self.best_solo_avg_grades[study_time])
+            #     print("best_solo_subject_study_case", study_time, self.best_solo_subject_study_cases[study_time])
+            #     print("best_solo_subjects_grade", study_time, self.best_solo_subjects_grades[study_time])
 
     def get_all_study_cases(self, subject_list):
         all_study_cases = defaultdict(list)
@@ -111,10 +124,19 @@ class Student(CPU):
 
     def make_student_real_subject_list(self):
         real_subject_list = []
-        for idx, subject in enumerate(self.subject_list):
-            real_subject = copy.deepcopy(subject)
-            real_subject.BT = self.best_solo_subject_study_case[idx]
-            real_subject_list.append(real_subject)
+        # 여기할때
+        # BT가 0 초과일때만 리스트에 append 하면 진짜진짜진짜끝날거같음
+        for idx, best_subject_study_time in enumerate(self.best_solo_subject_study_case):
+            # print(self.best_solo_subject_study_case)
+            if best_subject_study_time > 0:
+                real_subject = copy.deepcopy(self.subject_list[idx])
+                real_subject.BT = best_subject_study_time
+                real_subject.remain_BT = real_subject.BT 
+                real_subject_list.append(real_subject)
+        if self.best_each_team_play_time > 0:
+            real_subject_list.append(
+                Subject("팀프", 3, self.best_each_team_play_time, 14, -1),
+            )
         return real_subject_list
 
 
