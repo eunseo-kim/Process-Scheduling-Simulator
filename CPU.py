@@ -16,7 +16,7 @@ class CPU:
 
     def is_finished(self, quantum=-1):
         if not self.is_idle():
-            if self.process.remain_BT == 0:
+            if self.process.remain_bt == 0:
                 return True
             if self.work_time == quantum:
                 return True
