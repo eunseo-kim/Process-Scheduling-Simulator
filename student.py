@@ -75,7 +75,6 @@ class Student(CPU):
                         grade = self.convert_score_to_grade(score)
                         grade_list.append(grade)
                         total_grade_sum += grade * self.subject_list[subject_idx].credit
-                    # avg_grade
                     avg_grade = total_grade_sum / (self.total_credits - 3)
                     if self.best_solo_avg_grades[study_time] <= avg_grade:
                         if self.best_solo_avg_grades[study_time] < avg_grade:
