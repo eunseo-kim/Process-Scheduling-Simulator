@@ -2,7 +2,6 @@ from CPU import *
 from collections import defaultdict
 from itertools import product
 from Subject import * 
-import copy
 
 class Student(CPU):
     def __init__(self, student_name):  # student_name는 학생 이름, class_list는 학생이 듣는 수업
@@ -114,6 +113,7 @@ class Student(CPU):
 
     def get_all_study_cases(self, subject_list):
         all_study_cases = defaultdict(list)
+
         for study_subject_time_case in product(*[range(subject.BT + 1) for subject in subject_list]):
             study_time = sum(study_subject_time_case)
             if study_time <= 24:

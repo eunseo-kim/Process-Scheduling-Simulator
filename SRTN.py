@@ -26,8 +26,9 @@ class SRTN(Scheduler):
             # history 기록하기
             self.record_history(self.ready_queue[:], self.cpus, self.processes)
 
+            self.ready_queue = sorted(self.ready_queue, key=lambda x: x.remain_BT)
+
             for cpu in self.cpus:
-                self.ready_queue = sorted(self.ready_queue, key=lambda x: x.remain_BT)
                 # 종료된 거 있을 때 남은 remain_BT==0인 경우 => cpu free
                 if cpu.is_finished():
                     print("process finished - cur_time:", cur_time, " p_id :", cpu.process.process_id)
@@ -46,21 +47,18 @@ class SRTN(Scheduler):
                 for cpu in self.cpus:
                     cpu_list.append(cpu)
 
-                cpu_list.sort(key=lambda x: x.process.remain_BT)  # 오름차순으로 정렬
+                cpu_list.sort(key=lambda x: x.process.remain_BT)  # 오름차순으로 정렬 (+한번만해도 괜찮을듯)
 
-                while 1:
-                    if cpu_list[-1].process.remain_BT > self.ready_queue[0].remain_BT:
+                max_idx = min(self.cpu_count, len(self.ready_queue))  # 인덱스 에러 안 뜨게
+                for process_check_idx in range(max_idx):
+                    back_check_idx = -(process_check_idx + 1)
+                    if cpu_list[back_check_idx].process.remain_BT > self.ready_queue[process_check_idx].remain_BT:
                         print(
                             "context switching: ", cpu_list[-1].process.process_id, ", ", self.ready_queue[0].process_id
                         )
-                        now_cpu_process = cpu_list[-1].process
-                        cpu_list[-1].set_process(self.ready_queue[0])
-                        self.ready_queue[0] = now_cpu_process
-
-                        # 재정렬
-                        cpu_list.sort(key=lambda x: x.process.remain_BT)
-                        self.ready_queue.sort(key=lambda x: x.remain_BT)
-
+                        swap_process = cpu_list[back_check_idx].process
+                        cpu_list[back_check_idx].set_process(self.ready_queue.pop(0))
+                        self.ready_queue.append(swap_process)
                     else:
                         break
 

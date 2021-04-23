@@ -96,6 +96,7 @@ class MyApp(QWidget):
         self.TQLabel = QLabel("Quantum")
 
 
+
         # Gantt Chart를 표로 보여줄 Result_Table선언
         self.Result_Table = QTableWidget(self)
         self.Result_Table.setColumnCount(6)
@@ -147,6 +148,7 @@ class MyApp(QWidget):
         grid_Line2.addWidget(self.cpu_count, 0, 1)
         grid_Line2.addWidget(self.TQLabel, 1, 0)
         grid_Line2.addWidget(self.TQ, 1, 1)
+
         grid_Line2.addWidget(self.Run_Alg, 3, 0)
 
         # 두번째 줄을 통합해줄 hbox_Line2, Proc_Table과 grid_Line2를 레이아웃에 추가함.
@@ -482,6 +484,7 @@ class MyApp(QWidget):
                 )
                 self.Result_Table.setItem(student, 11, QTableWidgetItem(str(scheduler.students[student].best_avg_grade)))
                 # 전체 인원 평균 계산, 이후에 YOSA에서 따로 불러오는 경우가 생긴다면 빼고 그부분을 넣으면 될 것 같음.
+
             # 팀플 학점과 전체 평균은 병합했기에 한번만 입력하면 될 것이라 생각
             self.Result_Table.setItem(0, 10, QTableWidgetItem(str(scheduler.students[0].best_team_play_grade)))
             self.Result_Table.setItem(0, 12, QTableWidgetItem(str(scheduler.team_avg_grade)))
@@ -636,7 +639,6 @@ class MyApp(QWidget):
 
         self.StudentList.setEnabled(True)
         self.TQ.setEnabled(True)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

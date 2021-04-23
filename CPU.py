@@ -1,6 +1,6 @@
 class CPU:
-    def __init__(self, cpu_id):
-        self.cpu_id = cpu_id
+    def __init__(self, id):
+        self.id = id
         self.process = None
         self.work_time = 0
 
