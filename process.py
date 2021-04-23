@@ -25,6 +25,8 @@ class Process:
             [203, 170, 203],
             [207, 208, 254],
             [236, 213, 227],
+            [105, 255, 238],
+            [255, 105, 180]
         ]
         self.color = self.color_palette[color_idx]
 
