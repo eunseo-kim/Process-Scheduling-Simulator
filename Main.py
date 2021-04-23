@@ -54,12 +54,24 @@ def test(process_input_list, cpu_count):
 
 
 def test_YOSA():
+    # subject_input_list = [
+    #     Subject("알고리즘", 4, 1, 0, 0),
+    #     # Subject("웹프", 3, 7, 1, 0),
+    #     # Subject("직능훈", 2, 4, 2, 0),
+    #     # Subject("알고리즘", 4, 5, 3, 1),
+    #     Subject("C++", 4, 24, 4, 1),
+    #     # Subject("웹프", 3, 3, 5, 1),
+    #     # Subject("알고리즘", 4, 4, 6, 2),
+    #     # Subject("데베설", 3, 5, 7, 2),
+    #     # Subject("운영체제", 2, 6, 8, 2),
+    # ]
+
     subject_input_list = [
-        Subject("알고리즘", 4, 8, 0, 0),
-        Subject("웹프", 3, 7, 1, 0),
-        Subject("직능훈", 2, 4, 2, 0),
+        Subject("알고리즘", 1, 1, 0, 0),
+        # Subject("웹프", 3, 7, 1, 0),
+        # Subject("직능훈", 2, 4, 2, 0),
         # Subject("알고리즘", 4, 5, 3, 1),
-        Subject("C++", 4, 4, 4, 1),
+        Subject("C++", 1, 23, 4, 1),
         # Subject("웹프", 3, 3, 5, 1),
         # Subject("알고리즘", 4, 4, 6, 2),
         # Subject("데베설", 3, 5, 7, 2),
@@ -72,6 +84,9 @@ def test_YOSA():
     #     yosa.run()
     yosa = YOSA(subject_input_list, student_count, 40)
     yosa.run()
+    yosa = YOSA(subject_input_list, student_count, 35)
+    yosa.run()
+
 
 def main():
     test(

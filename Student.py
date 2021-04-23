@@ -1,22 +1,25 @@
 from CPU import *
 from collections import defaultdict
 from itertools import product
-from Subject import * 
+from Subject import *
+import copy
+
 
 class Student(CPU):
     def __init__(self, student_name):  # student_name는 학생 이름, class_list는 학생이 듣는 수업
         super().__init__(student_name)
         self.subject_list = []
-        self.best_solo_avg_grades = [0 for _ in range(25)]
+        # [DEBUG] 이게 평균학점 0점으로 초기화해서 최대 0점일 때 체크가 잘 안되었음
+        self.best_solo_avg_grades = [-1 for _ in range(25)]
         self.best_solo_subject_study_cases = defaultdict(list)
         self.best_solo_subjects_grades = defaultdict(list)
 
-        self.best_solo_total_study_time = 0 # 개인 공부 투자 시간
-        self.best_solo_subject_study_case = [] # 각 과목 공부 투자시간 순서대로
-        self.best_solo_subjects_grade = [] # 각 과목 학점 순서대로
-        self.best_each_team_play_time = 0 # 개인의 팀플 투자시간
-        self.best_team_play_grade = 0 # 팀플 학점
-        self.best_avg_grade = 0 # 최종적인 개인 학점(개인 공부 학점과 팀플 학점의 평균)
+        self.best_solo_total_study_time = 0  # 개인 공부 투자 시간
+        self.best_solo_subject_study_case = []  # 각 과목 공부 투자시간 순서대로
+        self.best_solo_subjects_grade = []  # 각 과목 학점 순서대로
+        self.best_each_team_play_time = 0  # 개인의 팀플 투자시간
+        self.best_team_play_grade = 0  # 팀플 학점
+        self.best_avg_grade = 0  # 최종적인 개인 학점(개인 공부 학점과 팀플 학점의 평균)
 
         self.total_credits = 3  # 총 학점 21 학점같은 - 기본 운영체제 팀플 3학점을 듣기 때문에
 
@@ -48,25 +51,16 @@ class Student(CPU):
         team_play_grade = self.convert_score_to_grade(team_play_score)
         return team_play_grade
 
-    def get_final_student_grade(self, each_solo_study_time, total_team_play_time, max_team_play_time ):
-        team_play_grade = self.get_team_play_grade(total_team_play_time, max_team_play_time ) * 3  # 운영체제는 3학점임
+    def get_final_student_grade(self, each_solo_study_time, total_team_play_time, max_team_play_time):
+        team_play_grade = self.get_team_play_grade(total_team_play_time, max_team_play_time) * 3  # 운영체제는 3학점임
         solo_study_grade = self.best_solo_avg_grades[each_solo_study_time] * (self.total_credits - 3)
         return (team_play_grade + solo_study_grade) / self.total_credits
 
     def set_best_solo_cases(self):
-        # 알고 7
-        # 0-8
-        # 배정이 아예 없으면
-        # all study case < 0
-        # 알고 7, 컴구조 4
-        # 0 : 0, 0
-        # 10 : (7, 3), (6,4)
-        # 11 : 7, 4
-        # 0 : 0,0
-        # 
         all_study_cases = self.get_all_study_cases(self.subject_list)
-        # TODO. if len(all_study_cases) > 0: len(defaultdict) =>
+        print("all_study_cases", all_study_cases, len(all_study_cases), all_study_cases is None)
         if len(all_study_cases) > 1:
+            # if True:
             for study_time in range(25):
                 # 모든 과목 공부시간(BT)을 다 합쳐도 시간이 남아서 현재 study_time에 대한 경우가 없을 때
 
@@ -85,7 +79,7 @@ class Student(CPU):
                         grade = self.convert_score_to_grade(score)
                         grade_list.append(grade)
                         total_grade_sum += grade * self.subject_list[subject_idx].credit
-                    #avg_grade
+                    # avg_grade
                     avg_grade = total_grade_sum / (self.total_credits - 3)
                     if self.best_solo_avg_grades[study_time] <= avg_grade:
                         if self.best_solo_avg_grades[study_time] < avg_grade:
@@ -121,7 +115,6 @@ class Student(CPU):
         # print("all_study_cases", all_study_cases)
         return all_study_cases
 
-
     def make_student_real_subject_list(self):
         real_subject_list = []
         # 여기할때
@@ -131,15 +124,13 @@ class Student(CPU):
             if best_subject_study_time > 0:
                 real_subject = copy.deepcopy(self.subject_list[idx])
                 real_subject.BT = best_subject_study_time
-                real_subject.remain_BT = real_subject.BT 
+                real_subject.remain_BT = real_subject.BT
                 real_subject_list.append(real_subject)
         if self.best_each_team_play_time > 0:
             real_subject_list.append(
                 Subject("팀프", 3, self.best_each_team_play_time, 14, -1),
             )
         return real_subject_list
-
-
 
     def convert_score_to_grade(self, score):
         if score >= 95:

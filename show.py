@@ -7,8 +7,6 @@ import time
 from PyQt5.QtCore import Qt
 import copy
 
-# TODO 팀프 학점 삭제 요청 - 운영체제 팀프라고 생각해서 3학점으로 고정해놓음..ㅠ
-
 
 class MyApp(QWidget):
     def __init__(self):
@@ -95,8 +93,6 @@ class MyApp(QWidget):
         self.TQ.setDisabled(True)
         self.TQLabel = QLabel("Quantum")
 
-
-
         # Gantt Chart를 표로 보여줄 Result_Table선언
         self.Result_Table = QTableWidget(self)
         self.Result_Table.setColumnCount(6)
@@ -110,9 +106,9 @@ class MyApp(QWidget):
 
         # Proc_List에 프로세스 목록을 추가 및 화면 내용을 리셋하는 버튼 (이때문에 거진 뒤로 가야할듯)
         self.addButton = QPushButton("Add", self)
-        self.addButton.clicked.connect(self.add)
+        # self.addButton.clicked.connect(self.add)
         # 수정 : 디버깅용 test를 add 버튼에 일시적으로 연결 (test 누르면 자동으로 값 입력됨)
-        # self.addButton.clicked.connect(self.test)
+        self.addButton.clicked.connect(self.test)
 
         resetButton = QPushButton("Reset", self)
         resetButton.clicked.connect(self.reset)
@@ -264,18 +260,18 @@ class MyApp(QWidget):
         ]
         # ----------------------------
         self.Proc_List = [
-            Subject("알고리즘", 4, 8, 0, 0),
-            Subject("웹프", 3, 7, 1, 0),
-            Subject("직능훈", 2, 4, 2, 0),
+            Subject("알고리즘", 1, 1, 0, 0),
+            # Subject("웹프", 3, 7, 1, 0),
+            # Subject("직능훈", 2, 4, 2, 0),
             # Subject("알고리즘", 4, 5, 3, 1),
-            Subject("C++", 4, 4, 4, 1),
+            Subject("C++", 1, 23, 4, 1),
             # Subject("웹프", 3, 3, 5, 1),
             # Subject("알고리즘", 4, 4, 6, 2),
             # Subject("데베설", 3, 5, 7, 2),
             # Subject("운영체제", 2, 6, 8, 2),
         ]
 
-        #-------------------------------
+        # -------------------------------
         print("[self.Proc_List]")
         print("[", end="")
         for idx, process in enumerate(self.Proc_List):
@@ -296,7 +292,11 @@ class MyApp(QWidget):
             )
             # if self.Proc_List[i].Color[0] + self.Proc_List[i].Color[1] + self.Proc_List[i].Color[2] < 350:
             #     self.Proc_Table.item(i, 0).setForeground(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
-            self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].AT)))
+            if self.cur_algo == "YOSA":
+                self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].credit)))
+            else:
+                self.Proc_Table.setItem(i, 1, QTableWidgetItem(str(self.Proc_List[i].AT)))
+
             self.Proc_Table.setItem(i, 2, QTableWidgetItem(str(self.Proc_List[i].BT)))
         # 초기화 부분
         self.ProName.clear()
@@ -477,12 +477,16 @@ class MyApp(QWidget):
                         QTableWidgetItem(str(scheduler.students[student].best_solo_subject_study_case[subject])),
                     )
                     self.Result_Table.setItem(
-                        student, 2 + subject * 2, QTableWidgetItem(str(scheduler.students[student].best_solo_subjects_grade[subject]))
+                        student,
+                        2 + subject * 2,
+                        QTableWidgetItem(str(scheduler.students[student].best_solo_subjects_grade[subject])),
                     )
                 self.Result_Table.setItem(
                     student, 9, QTableWidgetItem(str(scheduler.students[student].best_each_team_play_time))
                 )
-                self.Result_Table.setItem(student, 11, QTableWidgetItem(str(scheduler.students[student].best_avg_grade)))
+                self.Result_Table.setItem(
+                    student, 11, QTableWidgetItem(str(scheduler.students[student].best_avg_grade))
+                )
                 # 전체 인원 평균 계산, 이후에 YOSA에서 따로 불러오는 경우가 생긴다면 빼고 그부분을 넣으면 될 것 같음.
 
             # 팀플 학점과 전체 평균은 병합했기에 한번만 입력하면 될 것이라 생각
@@ -493,7 +497,6 @@ class MyApp(QWidget):
         # 원래 repaint 있던 부분들은 1초마다 자동갱신때 쓰던거라 필요없어서 지움
         # 초 = 슬라이더의 값
         second = self.history_slider.value()
-        
 
         # 표의 너비 지정
         if self.cur_algo != "YOSA":
@@ -521,7 +524,7 @@ class MyApp(QWidget):
             max_len_cpu = 0
             for seconds in range(second):
                 for cpu in range(cpu_count):
-                # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
+                    # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
                     if self.history[seconds + 1][1][cpu]:
                         max_len_cpu = cpu
                         self.Gantt_Table.setItem(
@@ -546,8 +549,8 @@ class MyApp(QWidget):
             # second를 별도로 최대사이즈? 모르겠다 그쨌든 << 별로도 잡야하고
             for seconds in range(second):
                 for student in range(student_count):
-                # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
-                    if seconds + 1< len(self.history[student]):
+                    # CPU가 쉬는 도중에는 할당될 프로세스가 없을 가능성 존재
+                    if seconds + 1 < len(self.history[student]):
                         if self.history[student][seconds + 1][1][0]:
                             max_len_student = student
                             self.Gantt_Table.setItem(
@@ -555,15 +558,14 @@ class MyApp(QWidget):
                             )
                             self.Gantt_Table.item(student, seconds).setBackground(
                                 QtGui.QColor(
-                                self.history[student][seconds + 1][1][0].Color[0],
-                                self.history[student][seconds + 1][1][0].Color[1],
-                                self.history[student][seconds + 1][1][0].Color[2],
+                                    self.history[student][seconds + 1][1][0].Color[0],
+                                    self.history[student][seconds + 1][1][0].Color[1],
+                                    self.history[student][seconds + 1][1][0].Color[2],
+                                )
                             )
-                        )
             self.Gantt_Table.scrollToItem(self.Gantt_Table.item(max_len_student, second - 1))
             fortext = "Real Time = " + str(second) + " hour"
             self.realTimeLabel.setText(fortext)
-
 
     def defaultSetting(self):
         # AT BT 범위 바꾼거 수정
@@ -639,6 +641,7 @@ class MyApp(QWidget):
 
         self.StudentList.setEnabled(True)
         self.TQ.setEnabled(True)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
