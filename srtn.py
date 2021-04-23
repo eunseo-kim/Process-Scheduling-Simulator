@@ -44,7 +44,6 @@ class SRTN(Scheduler):
                 cpu_list = []
                 for cpu in self.cpus:
                     cpu_list.append(cpu)
-
                 cpu_list.sort(key=lambda x: x.process.remain_bt)  # 오름차순으로 정렬 (+한번만해도 괜찮을듯)
 
                 max_idx = min(self.cpu_count, len(self.ready_queue))  # 인덱스 에러 안 뜨게

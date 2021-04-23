@@ -115,9 +115,9 @@ class MyApp(QWidget):
 
         # Proc_List에 프로세스 목록을 추가 및 화면 내용을 리셋하는 버튼
         self.add_button = QPushButton("Add", self)
-        self.add_button.clicked.connect(self.add)
+        # self.add_button.clicked.connect(self.add)
         # 수정 : 디버깅용 test를 add 버튼에 일시적으로 연결 (test 누르면 자동으로 값 입력됨)
-        # self.add_button.clicked.connect(self.test)
+        self.add_button.clicked.connect(self.test)
 
         reset_button = QPushButton("Reset", self)
         reset_button.clicked.connect(self.reset)
@@ -256,17 +256,17 @@ class MyApp(QWidget):
             Process("p9", 1, 4, 9),
         ]
         # ----------------------------
-        self.proc_list = [
-            Subject("알고리즘", 4, 8, 0, 0),
-            Subject("웹프", 3, 7, 1, 0),
-            Subject("직능훈", 2, 4, 2, 0),
-            # Subject("알고리즘", 4, 5, 3, 1),
-            Subject("C++", 4, 4, 4, 1),
-            # Subject("웹프", 3, 3, 5, 1),
-            # Subject("알고리즘", 4, 4, 6, 2),
-            # Subject("데베설", 3, 5, 7, 2),
-            # Subject("운영체제", 2, 6, 8, 2),
-        ]
+        # self.proc_list = [
+        #     Subject("알고리즘", 4, 8, 0, 0),
+        #     Subject("웹프", 3, 7, 1, 0),
+        #     Subject("직능훈", 2, 4, 2, 0),
+        #     # Subject("알고리즘", 4, 5, 3, 1),
+        #     Subject("C++", 4, 4, 4, 1),
+        #     # Subject("웹프", 3, 3, 5, 1),
+        #     # Subject("알고리즘", 4, 4, 6, 2),
+        #     # Subject("데베설", 3, 5, 7, 2),
+        #     # Subject("운영체제", 2, 6, 8, 2),
+        # ]
 
         # -------------------------------
         print("[self.proc_list]")
