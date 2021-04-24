@@ -589,7 +589,7 @@ class MyApp(QWidget):
         self.tq_label.setText("팀프 시간")
         # Proc_Table 기본 세팅
         self.proc_table.setColumnCount(4)
-        self.proc_table.setHorizontalHeaderLabels(["과목 이름", "학점", "소요 시간", "대상 인원"])
+        self.proc_table.setHorizontalHeaderLabels(["과목 이름", "학점", "소요 시간", "대상 학생"])
         header = self.proc_table.horizontalHeader()
         for column_idx in range(4):
             header.setSectionResizeMode(column_idx, QHeaderView.Stretch)
