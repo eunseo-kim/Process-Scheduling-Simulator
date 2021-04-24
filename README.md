@@ -15,23 +15,14 @@
 ---
 
 ## 클래스 구조도
+![image](https://user-images.githubusercontent.com/67737432/115970958-c38b1100-a580-11eb-8116-40b490b19e2f.png)
+
 
 #### Process(프로세스)
 
 #### CPU(프로세서)
 
-#### Scheduler (abstarct class)
-
-- 속성
-  - process_count
-  - process_list
-  - cpu_count
-  - cpu_list
-  - ready_queue
-- 메소드
-  - create_process(self, process_count, AT, BT)
-  - create_cpu(self, cpu_count)
-  - run(self)
+#### Scheduler (abstract class)
 
 ##### FCFS
 
@@ -47,9 +38,8 @@
 
 > 각 스케줄링(FCFS, RR, SPN...) class는 scheduler class를 상속받는다.
 
----
+##### Student
 
-## TODO
+##### Subject
 
-1. 클래스 다이어그램 작성하기
-2. 각 스케줄러의 리턴값 포맷 정하기(GUI와 연동하기 위함)
+> Student 는 CPU를, Subject는 Process를 상속받는다.
